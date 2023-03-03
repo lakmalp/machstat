@@ -1,0 +1,1 @@
+## The React (18.2.0) frontend of MachineSTAT project
