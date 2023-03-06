@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Card, Button } from '../../../_components'
-import { useService } from '../context/service';
+import { useService } from '../context/register-service';
 
 export default function RegisterForm() {
     const nameRef = useRef();

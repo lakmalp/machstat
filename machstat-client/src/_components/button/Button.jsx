@@ -1,8 +1,8 @@
 import React from 'react'
 
 export default function Button({ name, caption, className, onClick, disabled = false }) {
-    const paddingClass = " px-2 py-1 ";
-    const heightClass = " h-7 ";
+    const paddingClass = "  ";
+    const heightClass = "  ";
     const textClass = " text-sm text-white ";
     const fontClass = " font-inter font-semibold ";
     const shapeClass = " rounded ";
