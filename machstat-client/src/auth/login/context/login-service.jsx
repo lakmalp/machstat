@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth, errorCodes } from '../../../_contexts/AuthContext';
 
 const ServiceContext = React.createContext();
@@ -10,17 +10,20 @@ export function useService() {
 
 export function ServiceProvider({ children }) {
     const navigate = useNavigate();
-    const { login, currentUser: currentUser, errorMessages: authErrorMessages, successMessages: authSuccessMessages } = useAuth();
+    const { login, processing, currentUser, errorMessages, successMessages } = useAuth();
+    let location = useLocation();
 
     const value = {
         currentUser,
         errorCodes,
-        authErrorMessages,
-        authSuccessMessages,
-        authLogin: async (email, password) => {
+        errorMessages,
+        successMessages,
+        login: async (email, password) => {
             await login(email, password);
-            navigate("/");
+            const origin = location.state?.from?.pathname || '/dashboard';
+            navigate(origin);
         },
+        processing
     }
 
     return (

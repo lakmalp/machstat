@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from "../_api/axios";
 
 const AuthContext = React.createContext();
@@ -14,13 +15,14 @@ export const errorCodes = {
 
 export function AuthProvider({ children }) {
     const [currentUser, setCurrentUser] = useState();
-    const [errorMessages, setErrorMessages] = useState();
-    const [successMessages, setSuccessMessages] = useState();
+    const [errorMessages, setErrorMessages] = useState({});
+    const [successMessages, setSuccessMessages] = useState({});
     const [processing, setProcessing] = useState(true);
+    // const location = useLocation();
 
     useEffect(() => {
         (async () => {
-            setProcessing(true)
+            setProcessing(true);
             await axios.get('/sanctum/csrf-cookie');
             try {
                 setCurrentUser();
@@ -28,7 +30,7 @@ export function AuthProvider({ children }) {
                 setCurrentUser(res.data);
             } catch (e) {
                 if (e.response) {
-                    setErrorMessages([{ code: errorCodes.Unauthorised, message: e.response.data.message }]);
+                    setErrorMessages({ [errorCodes.Unauthorised]: e.response.data.message });
                 } else {
                     console.log(e)
                 }
@@ -40,12 +42,15 @@ export function AuthProvider({ children }) {
 
     const register = async (name, email, password, password_confirmation) => {
         try {
-            setErrorMessages("");
-            setSuccessMessages("");
+            setProcessing(true)
+            setErrorMessages({});
+            setSuccessMessages({});
             let res = await axios.post('register', { name, email, password, password_confirmation });
             setCurrentUser(res.data);
         } catch (e) {
-            setSuccessMessages("");
+            setSuccessMessages({});
+        } finally {
+            setProcessing(false);
         }
     }
 
@@ -55,11 +60,12 @@ export function AuthProvider({ children }) {
             await axios.post('/login', { email, password });
             let res = await axios.get('/api/user');
             setCurrentUser(res.data);
-
+            // const origin = location.state?.from?.pathname || '/';
+            // navigate(origin);
         } catch (e) {
             setCurrentUser()
-            setSuccessMessages("");
-            setErrorMessages(e.response.message);
+            setSuccessMessages({});
+            setErrorMessages(e.response.data.errors);
         } finally {
             setProcessing(false);
         }
@@ -68,11 +74,11 @@ export function AuthProvider({ children }) {
     const logout = async () => {
         try {
             setProcessing(true)
-            let res = await axios.post('/logout');
+            await axios.post('/logout');
             setCurrentUser();
 
         } catch (e) {
-            setSuccessMessages("");
+            setSuccessMessages({});
             setErrorMessages(e.response.message);
         } finally {
             setProcessing(false);

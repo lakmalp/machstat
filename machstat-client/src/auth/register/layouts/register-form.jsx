@@ -8,7 +8,7 @@ export default function RegisterForm() {
     const emailRef = useRef();
     const passwordRef = useRef();
     const retypePasswordRef = useRef();
-    const { currentUser, authErrorMessages, authSuccessMessages, authLogin, authRegister } = useService();
+    const { currentUser, errorMessages, successMessages, login, register, processing } = useService();
 
     const callRegister = () => {
         authRegister(nameRef.current.value, emailRef.current.value, passwordRef.current.value, retypePasswordRef.current.value);

@@ -1,8 +1,9 @@
-import { Link, redirect } from "react-router-dom";
-import { useAuth } from "../../_contexts/AuthContext";
+import { Link } from "react-router-dom";
+import { Button } from "../../_components";
+import { useService } from '../context/home-service';
 
 export default function HomePage() {
-    const { logout } = useAuth();
+    const { processing, logout } = useService();
 
     const signout = async () => {
         await logout();
@@ -11,7 +12,8 @@ export default function HomePage() {
     return (
         <>
             <h1>Logged in!</h1>
-            <button onClick={e => signout()} className="border rounded shadow py-1 px-2 mt-6 bg-gray-100 hover:bg-white font-inter" >Log out</button>
+            <Link to="/devices">Devices</Link>
+            <Button caption="Log out" name="signout" onClick={() => signout()} key="signout" className="shadow px-6 h-8" processing={processing} disabled={processing} />
         </>
     )
 }

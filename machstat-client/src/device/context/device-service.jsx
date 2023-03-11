@@ -8,9 +8,7 @@ export function useService() {
 }
 
 export function ServiceProvider({ children }) {
-    const { logout, processing } = useAuth();
     const value = {
-        logout, processing
     }
 
     return (

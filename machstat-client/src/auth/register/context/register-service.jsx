@@ -8,13 +8,13 @@ export function useService() {
 }
 
 export function ServiceProvider({ children }) {
-    const { register: authRegister, currentUser: currentUser, errorMessages: authErrorMessages, successMessages: authSuccessMessages } = useAuth();    
+    const { register, currentUser, errorMessages, successMessages, processing } = useAuth();    
 
     const value = {
         currentUser,
-        authErrorMessages,
-        authSuccessMessages,
-        authRegister
+        errorMessages,
+        successMessages,
+        register
     }
 
     return (
