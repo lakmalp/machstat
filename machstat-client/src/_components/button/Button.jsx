@@ -7,8 +7,9 @@ export default function Button({ name, caption, className, onClick, disabled = f
     const heightClass = "  ";
     const textClass = " text-sm text-white ";
     const fontClass = " font-inter font-semibold ";
-    const shapeClass = " rounded ";
-    const bgClass = (disabled ? " bg-pink-400 " : " bg-pink-700 hover:bg-pink-600 ");
+    const shapeClass = "  ";
+    const borderClass = " focus:outline-1 outline-pink-400 focus:ring-2 ring-gray-200 "
+    const bgClass = (disabled ? " bg-pink-400 " : " bg-pink-600 hover:bg-pink-500 ");
 
     return (
         <button
@@ -18,7 +19,7 @@ export default function Button({ name, caption, className, onClick, disabled = f
                 onClick();
             }}
             disabled={disabled}
-            className={`${paddingClass} ${heightClass} ${textClass} ${bgClass} ${fontClass} ${shapeClass}` + className}
+            className={`${paddingClass} ${heightClass} ${textClass} ${bgClass} ${fontClass} ${shapeClass} ${borderClass}` + className}
         >
             {!processing && caption}
             {processing && <FontAwesomeIcon icon={faSlash} className="animate-spin" /> }

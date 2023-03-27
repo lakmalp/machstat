@@ -4,11 +4,11 @@ import axios from '../../_api/axios';
 
 const ServiceContext = React.createContext();
 
-export function useService() {
+export function useNodeService() {
     return useContext(ServiceContext);
 }
 
-export function ServiceProvider({ children }) {
+export function NodeServiceProvider({ children }) {
     const emptyObject = {
         guid: '',
         name: ''
@@ -27,7 +27,7 @@ export function ServiceProvider({ children }) {
     const [serverData, setServerData] = useState([]);
     const [localData, setLocalData] = useState([]);
     const [filterValues, setFilterValues] = useState(emptyObject);
-    const [showDialog, setShowDialog] = useState(false);
+    const [showCrudDialog, setShowCrudDialog] = useState(false);
     const [statuses, setStasuses] = useState();
 
     useEffect(() => {
@@ -98,7 +98,7 @@ export function ServiceProvider({ children }) {
     const sidebarClickHandler = (action) => {
         switch (action) {
             case "plus":
-                setShowDialog(true);
+                setShowCrudDialog(true);
                 break;
             case "refresh":
                 reloadPage();
@@ -140,6 +140,14 @@ export function ServiceProvider({ children }) {
         setLocalData([..._localData]);
     }
 
+    const commandDelete = () => {
+        alert("ssss")
+    }
+
+    const closeCrudDialog = () => {
+        setShowCrudDialog(false);
+    }
+
     const value = {
         sidebarButtons,
         sidebarClickHandler,
@@ -150,7 +158,10 @@ export function ServiceProvider({ children }) {
         setSelectAllChecked,
         setFilterValues,
         localData,
-        rowCheckboxClicked
+        rowCheckboxClicked,
+        showCrudDialog,
+        closeCrudDialog,
+        commandDelete
     }
 
     return (

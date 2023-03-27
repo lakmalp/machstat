@@ -1,7 +1,7 @@
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { StatusIndicator, TableSidebar } from "../../_components";
-import { useService } from "../context/node-service"
+import { useNodeService } from "../context/node-service"
 
 export default function NodeOverview() {
     const {
@@ -15,7 +15,21 @@ export default function NodeOverview() {
         setFilterValues,
         localData,
         rowCheckboxClicked
-    } = useService();
+    } = useNodeService();
+
+    const deleteRecords = async () => {
+        let response = await MessageBox.show({
+            title: "Deletion of records",
+            message: "The selected records will be deleted and cannot be recovered.",
+            type: MessageBoxConstants.Type.Danger,
+            buttons: MessageBoxConstants.Buttons.OkCancel
+        });
+
+        if (response === MessageBoxConstants.Result.Ok) {
+            // proceed
+        }
+    }
+
     return (
         <div className=" h-full w-1/2 bg-white">
             <div className="text-lg text-center w-full pt-2 pb-1 mb-2 font-semibold border-b"></div>
@@ -69,7 +83,7 @@ const FilterBox = ({ name, value, setValue, className }) => {
     )
 }
 
-const FilterComboBox = ({name, value, setValue, items, className}) => {
+const FilterComboBox = ({ name, value, setValue, items, className }) => {
     return (
         <select name={name} value={value} onChange={(e) => setValue(prev => ({ ...prev, [e.target.name]: e.target.value }))}
             className={`rounded py-0 text-left text-xs font-semibold border-0 border-b border-gray-300 text-gray-400 h-7 focus:ring-0 ${className}`}>
