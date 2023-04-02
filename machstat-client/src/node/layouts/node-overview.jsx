@@ -4,6 +4,7 @@ import { StatusIndicator, TableSidebar } from "../../_components";
 import { useNodeService } from "../context/node-service"
 
 export default function NodeOverview() {
+
     const {
         sidebarButtons,
         sidebarClickHandler,
@@ -16,19 +17,6 @@ export default function NodeOverview() {
         localData,
         rowCheckboxClicked
     } = useNodeService();
-
-    const deleteRecords = async () => {
-        let response = await MessageBox.show({
-            title: "Deletion of records",
-            message: "The selected records will be deleted and cannot be recovered.",
-            type: MessageBoxConstants.Type.Danger,
-            buttons: MessageBoxConstants.Buttons.OkCancel
-        });
-
-        if (response === MessageBoxConstants.Result.Ok) {
-            // proceed
-        }
-    }
 
     return (
         <div className=" h-full w-1/2 bg-white">

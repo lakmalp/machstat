@@ -1,22 +1,16 @@
 import { useState } from "react";
 import { Button } from "../../_components";
 import DialogBox from "../../_components/dialog-box/dialog-box";
-import { MessageBox, MessageBoxConstants } from "../../_components/message-box/message-box";
 import { useNodeService } from "../context/node-service";
 
 export default function NodeDialog() {
     const { showCrudDialog, closeCrudDialog, commandDelete } = useNodeService();
-    const buttons = [
-        { caption: "Ok", onClick: commandDelete }
-    ];
 
     const create = async () => {
     }
 
     return (
         <>
-            {/* <MessageBox show={showMessageBox} close={() => setShowMessageBox(false)} buttons={buttons} message="The selected records will be deleted and cannot be recovered." title="Deletion of records" type={MessageBoxConstants.Type.Danger}></MessageBox> */}
-            
             <DialogBox show={showCrudDialog} close={closeCrudDialog}>
                 <DialogBox.Title>Create Node</DialogBox.Title>
                 <DialogBox.Content>

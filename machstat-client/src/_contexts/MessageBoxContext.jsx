@@ -1,23 +1,55 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
+var messageBoxResolveFunc;
 
 const MessageBoxContext = React.createContext();
 
-export function useMessageBoxService() {
+function useMessageBoxService() {
     return useContext(MessageBoxContext);
 }
 
-export function MessageBoxServiceProvider({children}) {    
-    const [messageBoxProps, setMessageBoxProps] = useState();
+function MessageBoxServiceProvider({children}) {
+    const MessageBoxConstants = {
+        Type: {
+            Information: 'information',
+            Danger: 'danger',
+            Success: 'success',
+            Warning: 'warning'
+        },
+        Buttons: {
+            YesNoCancel: "YesNoCancel",
+            OkCancel: "OkCancel"
+        },
+        Result: {
+            Ok: "Ok",
+            Cancel: "Cancel",
+            Yes: "Yes",
+            No: "No"
+        }
+    };
+
+    const initMessageBoxProps = {title:"", message:"", type:"", buttons:"", visible: false};
+
+    const [messageBoxProps, setMessageBoxProps] = useState(initMessageBoxProps);
 
     const MessageBox = {
-        show: ({title, message, type, buttons}) => {
+        show: async ({title, message, type, buttons}) => {
             setMessageBoxProps({title, message, type, buttons, visible: true});
+            var promise = new Promise((resolve) => {
+                messageBoxResolveFunc = resolve;
+            });
+            return await promise.then((result) => {
+                setMessageBoxProps(prev => ({...prev, visible: false}));
+                return (result === undefined ?  MessageBoxConstants.Result.Cancel : result);
+            });
+            
         }
     }
 
+    MessageBox.Constants = MessageBoxConstants;
+    MessageBox.Props = messageBoxProps;
+
     const value = {
-        MessageBox,
-        messageBoxProps
+        MessageBox
     }
 
     return (
@@ -26,3 +58,5 @@ export function MessageBoxServiceProvider({children}) {
         </MessageBoxContext.Provider>
     )
 }
+
+export {useMessageBoxService, MessageBoxServiceProvider, messageBoxResolveFunc}

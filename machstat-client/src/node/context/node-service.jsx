@@ -1,6 +1,7 @@
 import { faPlus, faRefresh, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import React, { useContext, useEffect, useState } from 'react';
 import axios from '../../_api/axios';
+import { useMessageBoxService } from "../../_contexts/MessageBoxContext";
 
 const ServiceContext = React.createContext();
 
@@ -9,6 +10,8 @@ export function useNodeService() {
 }
 
 export function NodeServiceProvider({ children }) {
+    const { MessageBox } = useMessageBoxService();
+
     const emptyObject = {
         guid: '',
         name: ''
@@ -95,22 +98,38 @@ export function NodeServiceProvider({ children }) {
         }
     ];
 
-    const sidebarClickHandler = (action) => {
+    const sidebarClickHandler = async (action) => {
         switch (action) {
             case "plus":
-                setShowCrudDialog(true);
+                createRecord();
                 break;
             case "refresh":
                 reloadPage();
                 break;
             case "trash":
-                let row_id = selectedRows.filter(row => row.checked)[0].id;
-                router.delete(`/devices/${row_id}`)
-                reloadPage();
+                await deleteRecords();
                 break;
 
             default:
                 break;
+        }
+    }
+
+    const createRecord = () => {
+        setShowCrudDialog(true);
+    }
+
+    const deleteRecords = async () => {
+        let res = await MessageBox.show({
+            title: "Deletion of records",
+            message: "The selected records will be deleted and cannot be recovered.",
+            type: MessageBox.Constants.Type.Danger,
+            buttons: MessageBox.Constants.Buttons.YesNoCancel
+        });
+        if (res === MessageBox.Constants.Result.Yes) {
+            let row_id = selectedRows.filter(row => row.checked)[0].id;
+            router.delete(`/devices/${row_id}`)
+            reloadPage();
         }
     }
 
