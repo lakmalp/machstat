@@ -159,12 +159,20 @@ export function NodeServiceProvider({ children }) {
         setLocalData([..._localData]);
     }
 
-    const commandDelete = () => {
-        alert("ssss")
-    }
-
     const closeCrudDialog = () => {
         setShowCrudDialog(false);
+    }
+
+    const store = async (data) => {
+        let res = await MessageBox.show({
+            title: "Addition of records",
+            message: "Record will be added to the Nodes collection. Proceed?",
+            type: MessageBox.Constants.Type.Danger,
+            buttons: MessageBox.Constants.Buttons.OkCancel
+        });
+        if (res === MessageBox.Constants.Result.Ok) {
+            alert(JSON.stringify(data, null, 2));
+        }
     }
 
     const value = {
@@ -180,7 +188,7 @@ export function NodeServiceProvider({ children }) {
         rowCheckboxClicked,
         showCrudDialog,
         closeCrudDialog,
-        commandDelete
+        store
     }
 
     return (
