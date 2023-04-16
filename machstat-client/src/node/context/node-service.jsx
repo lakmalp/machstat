@@ -40,13 +40,13 @@ export function NodeServiceProvider({ children }) {
     useEffect(() => {
         (async () => {
             try {
-                let res = axios.get("/nodes/query?");
+                let res = await axios.get("/api/nodes/query");
                 if (res.data.hasOwnProperty("statuses")) {
-                    setStasuses(res.data?.statuses);
+                    setStasuses([null, ...res.data.statuses]);
                 }
 
                 if (res.data.hasOwnProperty("data")) {
-                    setServerData(res.data?.data);
+                    setServerData(res.data.data);
                     setSelectedRows(addCheckedWithFalse(res.data?.data));
                 }
             } catch (e) {
@@ -101,7 +101,7 @@ export function NodeServiceProvider({ children }) {
     const sidebarClickHandler = async (action) => {
         switch (action) {
             case "plus":
-                createRecord();
+                setShowCrudDialog(true);
                 break;
             case "refresh":
                 reloadPage();
@@ -113,10 +113,6 @@ export function NodeServiceProvider({ children }) {
             default:
                 break;
         }
-    }
-
-    const createRecord = () => {
-        setShowCrudDialog(true);
     }
 
     const deleteRecords = async () => {
@@ -171,7 +167,16 @@ export function NodeServiceProvider({ children }) {
             buttons: MessageBox.Constants.Buttons.OkCancel
         });
         if (res === MessageBox.Constants.Result.Ok) {
-            alert(JSON.stringify(data, null, 2));
+            try {
+                let res = await axios.post('/api/nodes', { data });
+                let _serverData = [res.data.data, ...serverData];
+                setServerData(_serverData);
+                setSelectedRows(addCheckedWithFalse(_serverData));
+                setLocalData([..._serverData]);
+                setShowCrudDialog(false);
+            } catch (ex) {
+
+            }
         }
     }
 
@@ -188,6 +193,7 @@ export function NodeServiceProvider({ children }) {
         rowCheckboxClicked,
         showCrudDialog,
         closeCrudDialog,
+        selectedRows,
         store
     }
 

@@ -17,3 +17,14 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::middleware(['auth:sanctum'])->get('/nodes/query', function (Request $request) {
+    return [
+        'statuses' => ['NotConfigurred', 'Offline', 'Online', 'Suspended'], 
+        'data' => []
+    ];
+});
+
+Route::middleware(['auth:sanctum'])->post('/nodes', function (Request $request) {
+    return $request->all();
+});
