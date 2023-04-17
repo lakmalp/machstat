@@ -33,27 +33,43 @@ export function NodeServiceProvider({ children }) {
     const [showCrudDialog, setShowCrudDialog] = useState(false);
     const [statuses, setStasuses] = useState();
 
+    const reloadPage = async () => {
+        try {
+            let res = await axios.get("/api/nodes/query");
+            if (res.data.hasOwnProperty("statuses")) {
+                setStasuses([null, ...res.data.statuses]);
+            }
+
+            if (res.data.hasOwnProperty("data")) {
+                setServerData(res.data.data);
+                setLocalData(res.data.data);
+                setSelectedRows(addCheckedWithFalse(res.data?.data));
+            }
+        } catch (e) {
+            null;
+        }
+    }
+
     useEffect(() => {
         handleFilter();
     }, [filterValues])
 
     useEffect(() => {
-        (async () => {
-            try {
-                let res = await axios.get("/api/nodes/query");
-                if (res.data.hasOwnProperty("statuses")) {
-                    setStasuses([null, ...res.data.statuses]);
-                }
-
-                if (res.data.hasOwnProperty("data")) {
-                    setServerData(res.data.data);
-                    setSelectedRows(addCheckedWithFalse(res.data?.data));
-                }
-            } catch (e) {
-                null;
-            }
-        })();
+        ((async() => {
+            await reloadPage();
+        }))();
     }, [])
+
+    useEffect(() => {
+        if (Array.isArray(selectedRows) && (selectedRows.length > 0)) {
+            let selectedRowCnt = selectedRows.filter(row => row.checked === true).length;
+            if (selectedRowCnt >= 1) {
+                setSidebarInquireEnabled(prev => ({...prev, trash: true}));
+            } else {
+                setSidebarInquireEnabled(prev => ({...prev, trash: false}));
+            }
+        }
+    }, [selectedRows])
 
     const rowCheckboxClicked = (id) => {
         setSelectedRows(prev => [...prev.map(item => {
