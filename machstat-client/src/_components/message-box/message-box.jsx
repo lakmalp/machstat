@@ -1,4 +1,5 @@
-import { faCheck, faExclamation, faExclamationTriangle, faInfo } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faExclamation, faExclamationTriangle, faHandHoldingHand, faInfo, faStopCircle } from "@fortawesome/free-solid-svg-icons";
+import { faHand } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
@@ -59,32 +60,26 @@ export function MessageBox() {
                                     <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                         <div className="sm:flex sm:items-start">
                                             <div className={"mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10 " + iconBgColorVariants[MessageBox.Props.hasOwnProperty("type") ? MessageBox.Props.type : MessageBox.Constants.Type.Information]}>
-                                                {(MessageBox.Props.type === MessageBox.Constants.Type.Danger) && <FontAwesomeIcon icon={faExclamationTriangle} className={"text-xl " + iconColorVariants[MessageBox.Props.hasOwnProperty("type") ? MessageBox.Props.type : MessageBox.Constants.Type.Information]} />}
+                                                {(MessageBox.Props.type === MessageBox.Constants.Type.Danger) && <FontAwesomeIcon icon={faHand} className={"text-xl " + iconColorVariants[MessageBox.Props.hasOwnProperty("type") ? MessageBox.Props.type : MessageBox.Constants.Type.Information]} />}
                                                 {(MessageBox.Props.type === MessageBox.Constants.Type.Success) && <FontAwesomeIcon icon={faCheck} className={"text-xl " + iconColorVariants[MessageBox.Props.hasOwnProperty("type") ? MessageBox.Props.type : MessageBox.Constants.Type.Information]} />}
                                                 {(MessageBox.Props.type === MessageBox.Constants.Type.Warning) && <FontAwesomeIcon icon={faExclamation} className={"text-xl " + iconColorVariants[MessageBox.Props.hasOwnProperty("type") ? MessageBox.Props.type : MessageBox.Constants.Type.Information]} />}
                                                 {(MessageBox.Props.type === MessageBox.Constants.Type.Information) && <FontAwesomeIcon icon={faInfo} className={"text-xl " + iconColorVariants[MessageBox.Props.hasOwnProperty("type") ? MessageBox.Props.type : MessageBox.Constants.Type.Information]} />}
                                             </div>
-                                            <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                                <h3 className="text-base font-semibold leading-6 text-gray-900" id="modal-title">{MessageBox.Props.title || ""}</h3>
-                                                <div className="mt-2">
+                                            <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                                <h3 className="text-base font-semibolda leading-6 font-roboto border-b" id="modal-title">
+                                                    {(MessageBox.Props.type === MessageBox.Constants.Type.Danger) && <span className=" text-red-700">{MessageBox.Props.title || ""}</span>}
+                                                    {(MessageBox.Props.type === MessageBox.Constants.Type.Success) && <span className=" text-green-700">{MessageBox.Props.title || ""}</span>}
+                                                    {(MessageBox.Props.type === MessageBox.Constants.Type.Warning) && <span className=" text-orange-700">{MessageBox.Props.title || ""}</span>}
+                                                    {(MessageBox.Props.type === MessageBox.Constants.Type.Information) && <span className=" text-blue-700">{MessageBox.Props.title || ""}</span>}
+                                                </h3>
+                                                <div className="mt-3 font-roboto">
                                                     <p className="text-sm text-gray-800">{MessageBox.Props.message || ""}</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="bg-gray-50 px-10 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                                        {
-                                            (MessageBox.Props.buttons === MessageBox.Constants.Buttons.OkCancel) &&
-                                            <button type="button" onClick={() => messageBoxResolveFunc(MessageBox.Constants.Result.Ok)} className={"inline-flex w-full justify-center items-center rounded px-4 h-8 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto min-w-[64px] " + buttonBgColorVariants[MessageBox.Props.type]}>Ok</button>
-                                        }
-                                        {
-                                            (MessageBox.Props.buttons === MessageBox.Constants.Buttons.YesNoCancel) &&
-                                            <>
-                                                <button type="button" onClick={() => messageBoxResolveFunc(MessageBox.Constants.Result.Yes)} className={"inline-flex w-full justify-center items-center rounded px-4 h-8 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto min-w-[64px] " + buttonBgColorVariants[MessageBox.Props.type]}>Yes</button>
-                                                <button type="button" onClick={() => messageBoxResolveFunc(MessageBox.Constants.Result.No)} className={"inline-flex w-full justify-center items-center rounded px-4 h-8 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto min-w-[64px] " + buttonBgColorVariants[MessageBox.Props.type]}>No</button>
-                                            </>
-                                        }
-                                        <button type="button" onClick={() => messageBoxResolveFunc(MessageBox.Constants.Result.Cancel)} className={"inline-flex w-full justify-center items-center rounded px-4 h-8 text-sm font-semibold text-gray-600 bg-gray-100 shadow-sm sm:ml-3 sm:w-auto "}>Cancel</button>
+                                    <div className="bg-gray-50 px-10 py-3 sm:flex sm:flex-row-reverse sm:px-6 font-roboto">
+                                        <ButtonPanel buttons={MessageBox.Props.buttons} onClick={messageBoxResolveFunc} />
                                     </div>
                                 </Dialog.Panel>
                             </Transition.Child>
@@ -92,39 +87,21 @@ export function MessageBox() {
                     </div>
                 </Dialog>
             </Transition>
-            {/* <div className={"relative z-100 " + (show ? "" : "hidden")} aria-labelledby="modal-title" role="dialog" aria-modal="true">
-                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-
-                <div className="fixed inset-0 z-10 overflow-y-auto">
-                    <div className="flex min-h-full items-end justify-center p-3 text-center sm:items-center sm:p-0">
-                        <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                                <div className="sm:flex sm:items-start">
-                                    <div className={"mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10 " + iconBgColorVariants[type]}>
-                                        {(type === MessageBoxConstants.Type.Danger) && <FontAwesomeIcon icon={faExclamationTriangle} className={"text-xl " + iconColorVariants[type]} />}
-                                        {(type === MessageBoxConstants.Type.Success) && <FontAwesomeIcon icon={faCheck} className={"text-xl " + iconColorVariants[type]} />}
-                                        {(type === MessageBoxConstants.Type.Warning) && <FontAwesomeIcon icon={faExclamation} className={"text-xl " + iconColorVariants[type]} />}
-                                        {(type === MessageBoxConstants.Type.Information) && <FontAwesomeIcon icon={faInfo} className={"text-xl " + iconColorVariants[type]} />}
-                                    </div>
-                                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                        <h3 className="text-base font-semibold leading-6 text-gray-900" id="modal-title">{title}</h3>
-                                        <div className="mt-2">
-                                            <p className="text-sm text-gray-800">{message}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="bg-gray-50 px-10 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                                {
-                                    buttons && Array.isArray(buttons) && buttons.map((btn, i) =>
-                                        <button key={i} type="button" onClick={btn.onClick} className={"inline-flex w-full justify-center rounded-md px-4 py-2 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto " + buttonBgColorVariants[type]}>{btn.caption}</button>)
-                                }
-                                <button type="button" onClick={close} className={"inline-flex w-full justify-center rounded-md px-4 py-2 text-sm font-semibold text-gray-600 bg-gray-100 shadow-sm sm:ml-3 sm:w-auto "}>Cancel</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> */}
         </>
+    )
+}
+
+const ButtonPanel = ({ buttons, onClick }) => {
+    const btnArray = buttons.split(/(?=[A-Z])/);
+    return (
+        btnArray.map(
+            btn => <button
+                type="button"
+                onClick={() => onClick(btn)}
+                className={"inline-flex w-full justify-center items-center rounded px-4 h-8 text-sm text-gray-800 sm:ml-3 sm:w-auto min-w-[64px] hover:bg-gray-100 "}
+            >
+                {btn}
+            </button>
+        )
     )
 }

@@ -47,8 +47,8 @@ export default function NodeOverview() {
                                 <div key={i} className='flex items-center h-9 hover:bg-gray-50 transition-colors pr-2'>
                                     <div className='w-12 h-9 flex justify-center items-center border-b'><input id={i} onChange={(e) => rowCheckboxClicked(node.id)} type="checkbox" className="col-span-1 rounded-full border-gray-400 " checked={selectedRows.filter(item => (item.id == node.id))[0].checked} /></div>
                                     <div key={i} className="w-full grid grid-cols-12 gap-4 items-center border-b h-9">
-                                        <div className="text-left col-span-7 text-sm text-gray-600 ">{node.guid}</div>
-                                        <div className="text-left col-span-5 text-sm text-gray-600 flex justify-center">
+                                        <div className="text-left col-span-7 text-sm text-gray-800 ">{node.guid}</div>
+                                        <div className="text-left col-span-5 text-sm text-gray-800 flex justify-center">
                                             <StatusIndicator status={node.status} />
                                         </div>
                                     </div>

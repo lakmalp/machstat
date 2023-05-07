@@ -16,7 +16,9 @@ function MessageBoxServiceProvider({children}) {
             Warning: 'warning'
         },
         Buttons: {
+            YesNo: "YesNo",
             YesNoCancel: "YesNoCancel",
+            YesCancel: "YesCancel",
             OkCancel: "OkCancel"
         },
         Result: {

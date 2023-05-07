@@ -14,7 +14,7 @@ export function NodeServiceProvider({ children }) {
 
     const emptyObject = {
         guid: '',
-        name: ''
+        status: ''
     };
 
     const _sidebarInquireInit = { refresh: true, plus: true, edit: false, trash: false };
@@ -30,12 +30,13 @@ export function NodeServiceProvider({ children }) {
     const [serverData, setServerData] = useState([]);
     const [localData, setLocalData] = useState([]);
     const [filterValues, setFilterValues] = useState(emptyObject);
+    const [dialogData, setDialogData] = useState({});
     const [showCrudDialog, setShowCrudDialog] = useState(false);
     const [statuses, setStasuses] = useState();
 
     const reloadPage = async () => {
         try {
-            let res = await axios.get("/api/nodes/query");
+            let res = await axios.get("/api/nodes");
             if (res.data.hasOwnProperty("statuses")) {
                 setStasuses([null, ...res.data.statuses]);
             }
@@ -55,7 +56,7 @@ export function NodeServiceProvider({ children }) {
     }, [filterValues])
 
     useEffect(() => {
-        ((async() => {
+        ((async () => {
             await reloadPage();
         }))();
     }, [])
@@ -64,9 +65,9 @@ export function NodeServiceProvider({ children }) {
         if (Array.isArray(selectedRows) && (selectedRows.length > 0)) {
             let selectedRowCnt = selectedRows.filter(row => row.checked === true).length;
             if (selectedRowCnt >= 1) {
-                setSidebarInquireEnabled(prev => ({...prev, trash: true}));
+                setSidebarInquireEnabled(prev => ({ ...prev, trash: true }));
             } else {
-                setSidebarInquireEnabled(prev => ({...prev, trash: false}));
+                setSidebarInquireEnabled(prev => ({ ...prev, trash: false }));
             }
         }
     }, [selectedRows])
@@ -117,7 +118,10 @@ export function NodeServiceProvider({ children }) {
     const sidebarClickHandler = async (action) => {
         switch (action) {
             case "plus":
+                setDialogData();
                 setShowCrudDialog(true);
+                let res = await axios.get("/api/nodes/create");
+                setDialogData(res.data);
                 break;
             case "refresh":
                 reloadPage();
@@ -134,13 +138,24 @@ export function NodeServiceProvider({ children }) {
     const deleteRecords = async () => {
         let res = await MessageBox.show({
             title: "Deletion of records",
-            message: "The selected records will be deleted and cannot be recovered.",
+            message:
+                <div>
+                    The selected records will be deleted and cannot be recovered.
+                    <div className='pt-3'>
+                        Do you want to proceed?
+                    </div>
+                </div>,
             type: MessageBox.Constants.Type.Danger,
-            buttons: MessageBox.Constants.Buttons.YesNoCancel
+            buttons: MessageBox.Constants.Buttons.YesNo
         });
         if (res === MessageBox.Constants.Result.Yes) {
-            let row_id = selectedRows.filter(row => row.checked)[0].id;
-            router.delete(`/devices/${row_id}`)
+            let row_ids = selectedRows
+                .filter(row => row.checked)
+                .reduce((acc, curr) => {
+                    acc = [...acc, curr.id];
+                    return acc;
+                }, []);
+            await axios.patch(`/api/nodes/deleteBatch`, row_ids);
             reloadPage();
         }
     }
@@ -172,19 +187,24 @@ export function NodeServiceProvider({ children }) {
     }
 
     const closeCrudDialog = () => {
+        setDialogData();
         setShowCrudDialog(false);
     }
 
     const store = async (data) => {
         let res = await MessageBox.show({
             title: "Addition of records",
-            message: "Record will be added to the Nodes collection. Proceed?",
-            type: MessageBox.Constants.Type.Danger,
-            buttons: MessageBox.Constants.Buttons.OkCancel
+            message:
+                <div>
+                    Record will be added to the Nodes collection.
+                    <div className='pt-3'>Do you want to proceed?</div>
+                </div>,
+            type: MessageBox.Constants.Type.Information,
+            buttons: MessageBox.Constants.Buttons.YesNo
         });
-        if (res === MessageBox.Constants.Result.Ok) {
+        if (res === MessageBox.Constants.Result.Yes) {
             try {
-                let res = await axios.post('/api/nodes', { data });
+                let res = await axios.post('/api/nodes', data);
                 let _serverData = [res.data.data, ...serverData];
                 setServerData(_serverData);
                 setSelectedRows(addCheckedWithFalse(_serverData));
@@ -197,6 +217,7 @@ export function NodeServiceProvider({ children }) {
     }
 
     const value = {
+        dialogData,
         sidebarButtons,
         sidebarClickHandler,
         statuses,
