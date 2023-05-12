@@ -73,12 +73,12 @@ export function MessageBox() {
                                                     {(MessageBox.Props.type === MessageBox.Constants.Type.Information) && <span className=" text-blue-700">{MessageBox.Props.title || ""}</span>}
                                                 </h3>
                                                 <div className="mt-3 font-roboto">
-                                                    <p className="text-sm text-gray-800">{MessageBox.Props.message || ""}</p>
+                                                    <div className="text-sm text-gray-800">{MessageBox.Props.message || ""}</div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="bg-gray-50 px-10 py-3 sm:flex sm:flex-row-reverse sm:px-6 font-roboto">
+                                    <div className="bg-gray-50a px-10 py-3 sm:flex sm:flex-row-reverse sm:px-6 font-roboto">
                                         <ButtonPanel buttons={MessageBox.Props.buttons} onClick={messageBoxResolveFunc} />
                                     </div>
                                 </Dialog.Panel>
@@ -96,9 +96,10 @@ const ButtonPanel = ({ buttons, onClick }) => {
     return (
         btnArray.map(
             btn => <button
+                key={btn}
                 type="button"
                 onClick={() => onClick(btn)}
-                className={"inline-flex w-full justify-center items-center rounded px-4 h-8 text-sm text-gray-800 sm:ml-3 sm:w-auto min-w-[64px] hover:bg-gray-100 "}
+                className={"hover:drop-shadow-md border inline-flex w-full justify-center items-center rounded px-4 h-8 text-sm text-gray-600 font-medium sm:ml-3 sm:w-auto min-w-[64px] bg-gradient-to-b from-white to-gray-100 "}
             >
                 {btn}
             </button>

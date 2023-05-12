@@ -26,6 +26,7 @@ abstract class BaseController extends Controller implements IBaseController
     }
     public function store(Request $request): JsonResponse
     {
+        sleep(3);
         $this->model= new $this->model;
         $this->model->fill($request->all());
         $this->model->save();

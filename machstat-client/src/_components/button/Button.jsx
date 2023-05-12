@@ -1,4 +1,4 @@
-import { faSlash } from '@fortawesome/free-solid-svg-icons';
+import { faFloppyDisk, faSlash, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react'
 
@@ -19,10 +19,10 @@ export default function Button({ name, caption, className, onClick, disabled = f
                 onClick();
             }}
             disabled={disabled}
-            className={`${paddingClass} ${heightClass} ${textClass} ${bgClass} ${fontClass} ${shapeClass} ${borderClass}` + className}
+            className={`flex items-center justify-between ${paddingClass} ${heightClass} ${textClass} ${bgClass} ${fontClass} ${shapeClass} ${borderClass}` + className}
         >
-            {!processing && caption}
-            {processing && <FontAwesomeIcon icon={faSlash} className="animate-spin" /> }
+            {processing && <FontAwesomeIcon icon={faSpinner} className="mr-2 animate-spin" /> }
+            {caption}
         </button>
     )
 }

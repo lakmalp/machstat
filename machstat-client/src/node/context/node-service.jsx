@@ -2,6 +2,7 @@ import { faPlus, faRefresh, faTrashAlt } from '@fortawesome/free-solid-svg-icons
 import React, { useContext, useEffect, useState } from 'react';
 import axios from '../../_api/axios';
 import { useMessageBoxService } from "../../_contexts/MessageBoxContext";
+import { useOverlayService } from "../../_contexts/OverlayContext";
 
 const ServiceContext = React.createContext();
 
@@ -11,6 +12,7 @@ export function useNodeService() {
 
 export function NodeServiceProvider({ children }) {
     const { MessageBox } = useMessageBoxService();
+    const { Overlay } = useOverlayService();
 
     const emptyObject = {
         guid: '',
@@ -33,6 +35,7 @@ export function NodeServiceProvider({ children }) {
     const [dialogData, setDialogData] = useState({});
     const [showCrudDialog, setShowCrudDialog] = useState(false);
     const [statuses, setStasuses] = useState();
+    const [processing, setProcessing] = useState(false);
 
     const reloadPage = async () => {
         try {
@@ -136,6 +139,7 @@ export function NodeServiceProvider({ children }) {
     }
 
     const deleteRecords = async () => {
+        setProcessing(true);
         let res = await MessageBox.show({
             title: "Deletion of records",
             message:
@@ -158,6 +162,7 @@ export function NodeServiceProvider({ children }) {
             await axios.patch(`/api/nodes/deleteBatch`, row_ids);
             reloadPage();
         }
+        setProcessing(false);
     }
 
     const handleFilter = () => {
@@ -192,6 +197,7 @@ export function NodeServiceProvider({ children }) {
     }
 
     const store = async (data) => {
+        setProcessing(true);
         let res = await MessageBox.show({
             title: "Addition of records",
             message:
@@ -203,6 +209,7 @@ export function NodeServiceProvider({ children }) {
             buttons: MessageBox.Constants.Buttons.YesNo
         });
         if (res === MessageBox.Constants.Result.Yes) {
+            Overlay.show();
             try {
                 let res = await axios.post('/api/nodes', data);
                 let _serverData = [res.data.data, ...serverData];
@@ -214,9 +221,12 @@ export function NodeServiceProvider({ children }) {
 
             }
         }
+        setProcessing(false);
+        Overlay.hide();
     }
 
     const value = {
+        processing,
         dialogData,
         sidebarButtons,
         sidebarClickHandler,
