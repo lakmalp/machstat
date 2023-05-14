@@ -29,10 +29,17 @@ export function MessageBox() {
         [MessageBox.Constants.Type.Information]: "bg-blue-600 hover:bg-blue-500"
     }
 
+    const borderColorVariants = {
+        [MessageBox.Constants.Type.Danger]: "border-red-500",
+        [MessageBox.Constants.Type.Success]: "border-green-600",
+        [MessageBox.Constants.Type.Warning]: "border-yellow-500",
+        [MessageBox.Constants.Type.Information]: "border-blue-500"
+    }
+
     return (
         <>
             <Transition appear show={false || MessageBox.Props?.visible} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={() => messageBoxResolveFunc(MessageBox.Constants.Result.Cancel)}  >
+                <Dialog as="div" className="relative z-20" onClose={() => messageBoxResolveFunc(MessageBox.Constants.Result.Cancel)}  >
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -42,7 +49,7 @@ export function MessageBox() {
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
-                        <div className="fixed inset-0 bg-black bg-opacity-25" />
+                        <Dialog.Overlay className="fixed inset-0 bg-gray-100 bg-opacity-50 transition-opacity pointer-events-none" />
                     </Transition.Child>
 
                     <div className="fixed inset-0 overflow-y-auto">
@@ -56,7 +63,7 @@ export function MessageBox() {
                                 leaveFrom="opacity-100 scale-100"
                                 leaveTo="opacity-0 scale-95"
                             >
-                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-xl bg-white text-left align-middle shadow-xl transition-all">
+                                <Dialog.Panel className={"w-full max-w-md transform overflow-hidden rounded-xl bg-white text-left align-middle shadow-xl transition-all border-t-4 " + borderColorVariants[MessageBox.Props.type]}>
                                     <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                         <div className="sm:flex sm:items-start">
                                             <div className={"mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10 " + iconBgColorVariants[MessageBox.Props.hasOwnProperty("type") ? MessageBox.Props.type : MessageBox.Constants.Type.Information]}>

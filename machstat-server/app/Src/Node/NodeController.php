@@ -2,49 +2,82 @@
 
 namespace App\Src\Node;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\BaseModel;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class NodeController extends BaseController {
-    function __construct(Node $node) {
-        parent::__construct($node);
+class NodeController extends Controller
+{
+    private $validator;
+
+    private $repository;
+    function __construct(NodeValidator $validator, NodeRepository $repository)
+    {
+        $this->validator = $validator;
+        $this->repository = $repository;
     }
-    private $nodeStatuses = ['NotConfigurred', 'Offline', 'Online', 'Suspended'];
 
-    public function index(Request $request):JsonResponse {
-        $data = json_decode(parent::index($request)->getContent())->data;
+    public function index(Request $request): JsonResponse
+    {
+        $data = Node::orderBy('updated_at', 'DESC')->get();
 
-        return response() ->json([
-            'statuses' => $this->nodeStatuses, 
+        return response()->json([
+            'statuses' => Node::$nodeStatuses,
             'data' => $data
         ]);
     }
 
-    public function create(Request $request):JsonResponse {
-        $guid = str_pad(rand(0, 9999),4, "0", STR_PAD_LEFT) . "-" . 
-            str_pad(rand(0, 9999),4, "0", STR_PAD_LEFT) . "-" . 
-            str_pad(rand(0, 9999),4, "0", STR_PAD_LEFT) . "-" . 
-            str_pad(rand(0, 9999),4, "0", STR_PAD_LEFT);
+    public function create(Request $request): JsonResponse
+    {
+        $guid = str_pad(rand(0, 9999), 4, "0", STR_PAD_LEFT) . "-" .
+            str_pad(rand(0, 9999), 4, "0", STR_PAD_LEFT) . "-" .
+            str_pad(rand(0, 9999), 4, "0", STR_PAD_LEFT) . "-" .
+            str_pad(rand(0, 9999), 4, "0", STR_PAD_LEFT);
 
         $node = new Node;
         $node->guid = $guid;
         $node->status = 'NotConfigurred';
-        return response()->json(['statuses' => $this->nodeStatuses, 'data' => $node]);
+        return response()->json(['statuses' => Node::$nodeStatuses, 'data' => $node]);
     }
 
-    public function edit(BaseModel $node):JsonResponse {
-        return response() ->json([
-            'statuses' => $this->nodeStatuses, 
+    public function store(Request $request): JsonResponse
+    {
+        abort_if($request->user()->cannot('create-node', Node::class), 403);
+
+        $validated = $this->validator->validateNode($request);
+
+        $node = $this->repository->createNode($request, $validated);
+
+        // SendOrderToVendor::dispatch($order)->onQueue('orders');
+
+        // NewOrderPlaced::dispatch($order);
+        
+        return response()->json(['data' => $node]);
+    }
+
+    public function edit(Node $node): JsonResponse
+    {
+        return response()->json([
+            'statuses' => Node::$nodeStatuses,
             'data' => $node
         ]);
     }
 
-    public function update(Request $request):JsonResponse {
+    public function update(Request $request): JsonResponse
+    {
         return new JsonResponse;
+    }
+
+    public function delete(Node $node): bool
+    {
+        return $node->delete();
+    }
+    public function deleteBatch(Request $request): JsonResponse
+    {
+        Node::destroy($request->all());
+        return response()->json([]);
     }
 }

@@ -2,7 +2,7 @@ import { faPlus, faRefresh, faTrashAlt } from '@fortawesome/free-solid-svg-icons
 import React, { useContext, useEffect, useState } from 'react';
 import axios from '../../_api/axios';
 import { useMessageBoxService } from "../../_contexts/MessageBoxContext";
-import { useOverlayService } from "../../_contexts/OverlayContext";
+import { usePageStateService } from '../../_contexts/PageStateContext';
 
 const ServiceContext = React.createContext();
 
@@ -12,7 +12,7 @@ export function useNodeService() {
 
 export function NodeServiceProvider({ children }) {
     const { MessageBox } = useMessageBoxService();
-    const { Overlay } = useOverlayService();
+    const {PageState} = usePageStateService();
 
     const emptyObject = {
         guid: '',
@@ -36,6 +36,7 @@ export function NodeServiceProvider({ children }) {
     const [showCrudDialog, setShowCrudDialog] = useState(false);
     const [statuses, setStasuses] = useState();
     const [processing, setProcessing] = useState(false);
+    const [apiErrors, setApiErrors] = useState({});
 
     const reloadPage = async () => {
         try {
@@ -139,7 +140,6 @@ export function NodeServiceProvider({ children }) {
     }
 
     const deleteRecords = async () => {
-        setProcessing(true);
         let res = await MessageBox.show({
             title: "Deletion of records",
             message:
@@ -153,6 +153,7 @@ export function NodeServiceProvider({ children }) {
             buttons: MessageBox.Constants.Buttons.YesNo
         });
         if (res === MessageBox.Constants.Result.Yes) {
+            PageState.setWaiting(true);
             let row_ids = selectedRows
                 .filter(row => row.checked)
                 .reduce((acc, curr) => {
@@ -160,9 +161,9 @@ export function NodeServiceProvider({ children }) {
                     return acc;
                 }, []);
             await axios.patch(`/api/nodes/deleteBatch`, row_ids);
-            reloadPage();
+            await reloadPage();
+            PageState.setWaiting(false);
         }
-        setProcessing(false);
     }
 
     const handleFilter = () => {
@@ -197,7 +198,7 @@ export function NodeServiceProvider({ children }) {
     }
 
     const store = async (data) => {
-        setProcessing(true);
+        setApiErrors({})
         let res = await MessageBox.show({
             title: "Addition of records",
             message:
@@ -209,20 +210,22 @@ export function NodeServiceProvider({ children }) {
             buttons: MessageBox.Constants.Buttons.YesNo
         });
         if (res === MessageBox.Constants.Result.Yes) {
-            Overlay.show();
             try {
+                PageState.setWaiting(true);
                 let res = await axios.post('/api/nodes', data);
                 let _serverData = [res.data.data, ...serverData];
                 setServerData(_serverData);
                 setSelectedRows(addCheckedWithFalse(_serverData));
                 setLocalData([..._serverData]);
                 setShowCrudDialog(false);
-            } catch (ex) {
-
+                setApiErrors({})
+            } catch (e) {
+                setApiErrors(e.response.data.errors);
             }
+        } else {
+            setApiErrors({})
         }
-        setProcessing(false);
-        Overlay.hide();
+        PageState.setWaiting(false);
     }
 
     const value = {
@@ -241,7 +244,8 @@ export function NodeServiceProvider({ children }) {
         showCrudDialog,
         closeCrudDialog,
         selectedRows,
-        store
+        store,
+        apiErrors
     }
 
     return (

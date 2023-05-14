@@ -2,10 +2,10 @@
 
 namespace App\Src\Node;
 
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 
-class Node extends BaseModel {
+class Node extends Model {
+    public static $nodeStatuses = ['NotConfigurred', 'Offline', 'Online', 'Suspended'];
     protected $fillable = [
         'guid',
         'status',

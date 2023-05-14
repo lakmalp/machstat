@@ -1,6 +1,4 @@
-import { faCheck, faDisplay, faExclamation, faExclamationTriangle, faInfo, faQuestion } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useRef, useState, Fragment } from "react";
+import React, { Fragment } from "react";
 import { Dialog, Transition } from '@headlessui/react'
 
 function DialogBox({ show = false, close, children }) {
