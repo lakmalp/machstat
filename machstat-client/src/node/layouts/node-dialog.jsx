@@ -36,8 +36,8 @@ export default function NodeDialog() {
                 <DialogBox.Commands>
                     <Button
                         disabled={processing}
-                        caption="Create"
-                        name="create"
+                        caption="Save"
+                        name="save"
                         onClick={() => {
                             if (dialogMode === "create") {
                                 storeRecord(localData)
