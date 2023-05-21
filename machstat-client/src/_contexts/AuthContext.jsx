@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from "../_api/axios";
 
 const AuthContext = React.createContext();
@@ -18,7 +18,6 @@ export function AuthProvider({ children }) {
     const [errorMessages, setErrorMessages] = useState({});
     const [successMessages, setSuccessMessages] = useState({});
     const [processing, setProcessing] = useState(true);
-    // const location = useLocation();
 
     useEffect(() => {
         (async () => {
@@ -38,6 +37,18 @@ export function AuthProvider({ children }) {
                 setProcessing(false);
             }
         })();
+
+        // const heartbeatHandle = setInterval(async () => {
+        //     try {
+        //         let res = await axios.get('/api/heartbeat');
+        //     } catch (e) {
+        //         navigate('/login');
+        //     }
+        // }, 5000);
+
+        // return () => {
+        //     clearInterval(heartbeatHandle);
+        // };
     }, [])
 
     const register = async (name, email, password, password_confirmation) => {

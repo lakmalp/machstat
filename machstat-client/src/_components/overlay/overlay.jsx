@@ -8,7 +8,7 @@ function Overlay({ close, children }) {
   const {PageState} = usePageStateService();
   return (
     <Transition appear show={PageState.waiting} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={() => {}}  >
+      <Dialog as="div" className="relative z-100" onClose={() => {}}  >
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"

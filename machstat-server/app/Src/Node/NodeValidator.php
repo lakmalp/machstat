@@ -8,10 +8,20 @@ use Illuminate\Validation\Validator;
 
 class NodeValidator
 {
-    public function validateNode(Request $request)
+    public function validateCreate(Request $request)
     {
         return validator($request->all(), [
-            'guid' => ['required', 'unique:nodes,guid'],
+            'guid' => ['required', Rule::unique('nodes', 'guid')],
+            'status' => ['required', Rule::in(Node::$nodeStatuses)]
+        ])->after(
+            fn ($validator) => $this->validateProducts($request, $validator)
+        )->validate();
+    }
+
+    public function validateUpdate(Request $request)
+    {
+        return validator($request->all(), [
+            'guid' => ['required', Rule::unique('nodes', 'guid')->ignore($request->id)],
             'status' => ['required', Rule::in(Node::$nodeStatuses)]
         ])->after(
             fn ($validator) => $this->validateProducts($request, $validator)

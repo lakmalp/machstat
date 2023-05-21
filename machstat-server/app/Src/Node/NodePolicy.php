@@ -10,4 +10,8 @@ class NodePolicy
     {
         return true;
     }
+    public function editNode(User $user)
+    {
+        return true;
+    }
 }

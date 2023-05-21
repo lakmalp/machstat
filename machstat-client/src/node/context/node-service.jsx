@@ -1,4 +1,4 @@
-import { faPlus, faRefresh, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faPlus, faRefresh, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import React, { useContext, useEffect, useState } from 'react';
 import axios from '../../_api/axios';
 import { useMessageBoxService } from "../../_contexts/MessageBoxContext";
@@ -12,7 +12,7 @@ export function useNodeService() {
 
 export function NodeServiceProvider({ children }) {
     const { MessageBox } = useMessageBoxService();
-    const {PageState} = usePageStateService();
+    const { PageState } = usePageStateService();
 
     const emptyObject = {
         guid: '',
@@ -26,6 +26,11 @@ export function NodeServiceProvider({ children }) {
         return ret;
     }
 
+    const DialogMode = {
+        create: "create",
+        edit: "edit"
+    }
+
     const [selectAllChecked, setSelectAllChecked] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
     const [sidebarInquireEnabled, setSidebarInquireEnabled] = useState(_sidebarInquireInit);
@@ -37,6 +42,7 @@ export function NodeServiceProvider({ children }) {
     const [statuses, setStasuses] = useState();
     const [processing, setProcessing] = useState(false);
     const [apiErrors, setApiErrors] = useState({});
+    const [dialogMode, setDialogMode] = useState(DialogMode.create);
 
     const reloadPage = async () => {
         try {
@@ -68,10 +74,12 @@ export function NodeServiceProvider({ children }) {
     useEffect(() => {
         if (Array.isArray(selectedRows) && (selectedRows.length > 0)) {
             let selectedRowCnt = selectedRows.filter(row => row.checked === true).length;
-            if (selectedRowCnt >= 1) {
-                setSidebarInquireEnabled(prev => ({ ...prev, trash: true }));
+            if (selectedRowCnt === 1) {
+                setSidebarInquireEnabled(prev => ({ ...prev, trash: true, edit: true }));
+            } else if (selectedRowCnt > 1) {
+                setSidebarInquireEnabled(prev => ({ ...prev, trash: true, edit: false }));
             } else {
-                setSidebarInquireEnabled(prev => ({ ...prev, trash: false }));
+                setSidebarInquireEnabled(prev => ({ ...prev, trash: false, edit: false }));
             }
         }
     }, [selectedRows])
@@ -93,7 +101,7 @@ export function NodeServiceProvider({ children }) {
         {
             name: "refresh",
             faIcon: faRefresh,
-            iconEnabledClass: "text-gray-600",
+            iconEnabledClass: "text-gray-500",
             iconDisabledClass: "text-gray-300",
             bgEnabledClass: "hover:bg-gray-200",
             bgDisabledClass: ""
@@ -104,7 +112,15 @@ export function NodeServiceProvider({ children }) {
         {
             name: "plus",
             faIcon: faPlus,
-            iconEnabledClass: "text-gray-600",
+            iconEnabledClass: "text-gray-500",
+            iconDisabledClass: "text-gray-300",
+            bgEnabledClass: "hover:bg-gray-200",
+            bgDisabledClass: ""
+        },
+        {
+            name: "edit",
+            faIcon: faEdit,
+            iconEnabledClass: "text-gray-500",
             iconDisabledClass: "text-gray-300",
             bgEnabledClass: "hover:bg-gray-200",
             bgDisabledClass: ""
@@ -112,8 +128,8 @@ export function NodeServiceProvider({ children }) {
         {
             name: "trash",
             faIcon: faTrashAlt,
-            iconEnabledClass: "text-red-600",
-            iconDisabledClass: "text-red-300",
+            iconEnabledClass: "text-gray-500",
+            iconDisabledClass: "text-gray-300",
             bgEnabledClass: "hover:bg-gray-200",
             bgDisabledClass: ""
         }
@@ -122,16 +138,21 @@ export function NodeServiceProvider({ children }) {
     const sidebarClickHandler = async (action) => {
         switch (action) {
             case "plus":
+                PageState.setWaiting(true);
                 setDialogData();
-                setShowCrudDialog(true);
                 let res = await axios.get("/api/nodes/create");
+                PageState.setWaiting(false);
                 setDialogData(res.data);
+                setShowCrudDialog(true);
                 break;
             case "refresh":
                 reloadPage();
                 break;
             case "trash":
-                await deleteRecords();
+                await deleteRecords(selectedRows.filter(row => row.checked));
+                break;
+            case "edit":
+                await editRecord(selectedRows.filter(row => row.checked)[0]);
                 break;
 
             default:
@@ -139,7 +160,39 @@ export function NodeServiceProvider({ children }) {
         }
     }
 
-    const deleteRecords = async () => {
+    const editRecord = async (row) => {
+        PageState.setWaiting(true);
+        setApiErrors({})
+        setDialogMode(DialogMode.edit);
+        setDialogData();
+        let res = await axios.get(`/api/nodes/${row.id}`);
+        setDialogData(res.data);
+        PageState.setWaiting(false);
+        setShowCrudDialog(true);
+    }
+
+    const updateRecord = async (data) => {
+        try {
+            PageState.setWaiting(true);
+            let res = await axios.put(`/api/nodes/${data.id}`, data);
+            let _serverData = serverData.map(row => {
+                if (row.id === data.id) {
+                    return res.data.data;
+                }
+                return row;
+            });
+            setServerData(_serverData);
+            setSelectedRows(addCheckedWithFalse(_serverData));
+            setLocalData([..._serverData]);
+            setShowCrudDialog(false);
+            setApiErrors({})
+        } catch (e) {
+            setApiErrors(e.response.data.errors);
+        }
+        PageState.setWaiting(false);
+    }
+
+    const deleteRecords = async (rows) => {
         let res = await MessageBox.show({
             title: "Deletion of records",
             message:
@@ -154,12 +207,10 @@ export function NodeServiceProvider({ children }) {
         });
         if (res === MessageBox.Constants.Result.Yes) {
             PageState.setWaiting(true);
-            let row_ids = selectedRows
-                .filter(row => row.checked)
-                .reduce((acc, curr) => {
-                    acc = [...acc, curr.id];
-                    return acc;
-                }, []);
+            let row_ids = rows.reduce((acc, curr) => {
+                acc = [...acc, curr.id];
+                return acc;
+            }, []);
             await axios.patch(`/api/nodes/deleteBatch`, row_ids);
             await reloadPage();
             PageState.setWaiting(false);
@@ -197,7 +248,7 @@ export function NodeServiceProvider({ children }) {
         setShowCrudDialog(false);
     }
 
-    const store = async (data) => {
+    const storeRecord = async (data) => {
         setApiErrors({})
         let res = await MessageBox.show({
             title: "Addition of records",
@@ -230,6 +281,7 @@ export function NodeServiceProvider({ children }) {
 
     const value = {
         processing,
+        dialogMode,
         dialogData,
         sidebarButtons,
         sidebarClickHandler,
@@ -244,7 +296,8 @@ export function NodeServiceProvider({ children }) {
         showCrudDialog,
         closeCrudDialog,
         selectedRows,
-        store,
+        storeRecord,
+        updateRecord,
         apiErrors
     }
 

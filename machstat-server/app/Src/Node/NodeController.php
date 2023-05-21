@@ -47,9 +47,9 @@ class NodeController extends Controller
     {
         abort_if($request->user()->cannot('create-node', Node::class), 403);
 
-        $validated = $this->validator->validateNode($request);
+        $validated = $this->validator->validateCreate($request);
 
-        $node = $this->repository->createNode($request, $validated);
+        $node = $this->repository->createNode($validated);
 
         // SendOrderToVendor::dispatch($order)->onQueue('orders');
 
@@ -66,9 +66,19 @@ class NodeController extends Controller
         ]);
     }
 
-    public function update(Request $request): JsonResponse
+    public function update(Request $request, Node $node): JsonResponse
     {
-        return new JsonResponse;
+        abort_if($request->user()->cannot('edit-node', Node::class), 403);
+
+        $validated = $this->validator->validateUpdate($request);
+
+        $node = $this->repository->updateNode($node, $validated);
+
+        // SendOrderToVendor::dispatch($order)->onQueue('orders');
+
+        // NewOrderPlaced::dispatch($order);
+        
+        return response()->json(['data' => $node]);
     }
 
     public function delete(Node $node): bool

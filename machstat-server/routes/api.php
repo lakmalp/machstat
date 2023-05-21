@@ -19,8 +19,14 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::middleware(['auth:sanctum'])->get('/heartbeat', function (Request $request) {
+    return response()->json([]);
+});
+
 Route::middleware(['auth:sanctum'])->get('/nodes', [NodeController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->get('/nodes/create', [NodeController::class, 'create']);
 Route::middleware(['auth:sanctum'])->patch('/nodes/deleteBatch', [NodeController::class, 'deleteBatch']);
+Route::middleware(['auth:sanctum'])->get('/nodes/{node}', [NodeController::class, 'edit']);
+Route::middleware(['auth:sanctum'])->put('/nodes/{node}', [NodeController::class, 'update']);
 Route::middleware(['auth:sanctum'])->post('/nodes', [NodeController::class, 'store']);
