@@ -1,4 +1,4 @@
-import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { faClose, faFilter } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { StatusIndicator, TableSidebar } from "../../_components";
 import { useNodeService } from "../context/node-service"
@@ -16,17 +16,21 @@ export default function NodeOverview() {
         setFilterValues,
         localData,
         rowCheckboxClicked,
-        selectedRows
+        selectedRows,
+        pageNo,
+        setPageNo
     } = useNodeService();
 
     return (
         <div className=" h-full w-1/2 bg-white">
             <div className="text-lg text-center w-full pt-2 pb-1 mb-2 font-semibold border-b"></div>
             <div className="flex items-start">
-                <TableSidebar sidebarButtons={sidebarButtons} className="rounded-lg py-1 bg-gray-100 px-1 " inquireEnabled={sidebarInquireEnabled} clickHandler={(action) => sidebarClickHandler(action)} />
+                <TableSidebar pageNo={pageNo} setPageNo={setPageNo} sidebarButtons={sidebarButtons} className="rounded-lg py-1 bg-gray-100 px-1 " inquireEnabled={sidebarInquireEnabled} clickHandler={(action) => sidebarClickHandler(action)} />
                 <div className="w-full pl-2 font-inter">
                     <div className='w-full flex items-center bg-gray-100 rounded-t-lg h-7'>
-                        <div className='w-12 '></div>
+                        <div className='w-12 flex items-center justify-center'>
+                            {/* <FontAwesomeIcon icon={faFilter} className="text-gray-400" /> */}
+                        </div>
                         <div className="w-full grid grid-cols-12 gap-4 items-center bg-gray-100 rounded-tr-lg">
                             <div className="text-left col-span-7 text-xs font-semibold text-gray-500">GUID</div>
                             <div className="text-left col-span-5 text-xs font-semibold text-gray-500">Status</div>

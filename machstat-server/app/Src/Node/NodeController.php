@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -22,12 +23,32 @@ class NodeController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $data = Node::orderBy('updated_at', 'DESC')->get();
+        $per_page = $request->input('pageSize') ?? 10;
 
-        return response()->json([
-            'statuses' => Node::$nodeStatuses,
-            'data' => $data
+        $current_page = $request->input('pageNo') ?? 1;
+
+        $starting_point = $per_page * ($current_page - 1);
+
+        $total = Node::orderBy('updated_at', 'DESC')->get()->count();
+
+        $data = Node::orderBy('updated_at', 'DESC')
+            ->take($per_page)
+            ->skip($starting_point)
+            ->get()
+            ->toArray();  
+
+        $array= new Paginator($data, $per_page, $current_page);
+
+        $statuses = collect([
+            'statuses' => Node::$nodeStatuses, 
+            'total' => $total,
+            'count' => $array->count(),
+            'is_last_page' => (($array->count() < $per_page) || (($current_page - 1) * $per_page) + $array->count() == $total)
         ]);
+
+        $ret = $statuses->merge($array);
+
+        return response()->json($ret);
     }
 
     public function create(Request $request): JsonResponse

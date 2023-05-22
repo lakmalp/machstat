@@ -1,4 +1,4 @@
-import { faEdit, faEllipsisV, faPlus, faRefresh, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faAngleRight, faEdit, faEllipsisV, faPlus, faRefresh, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import React, { useContext, useEffect, useState } from 'react';
 import axios from '../../_api/axios';
 import { useMessageBoxService } from "../../_contexts/MessageBoxContext";
@@ -48,11 +48,13 @@ export function NodeServiceProvider({ children }) {
     const [apiErrors, setApiErrors] = useState({});
     const [dialogMode, setDialogMode] = useState(DialogMode.create);
     const [pageNo, setPageNo] = useState(searchParams.get("pageNo"));
+    const [pageSize, setPageSize] = useState(searchParams.get("pageSize"));
     const [searchQuery, setSearchQuery] = useState(searchParams.get("searchQuery") || "");
 
     const reloadPage = async () => {
         try {
-            let res = await axios.get(`/api/nodes?pageNo=${pageNo}&searchQuery=${searchQuery}`);
+            PageState.setWaiting(true);
+            let res = await axios.get(`/api/nodes?pageNo=${pageNo}&searchQuery=${searchQuery}&pageSize=${pageSize}`);
             if (res.data.hasOwnProperty("statuses")) {
                 setStasuses([null, ...res.data.statuses]);
             }
@@ -65,6 +67,7 @@ export function NodeServiceProvider({ children }) {
         } catch (e) {
             null;
         }
+        PageState.setWaiting(false);
     }
 
     useEffect(() => {
@@ -75,22 +78,32 @@ export function NodeServiceProvider({ children }) {
         ((async () => {
             if (pageNo === null) {
                 setPageNo(1);
-                navigate(`/nodes?pageNo=1&searchQuery=`);
+                setPageSize(10);
+                navigate(`/nodes?pageNo=1&searchQuery=&pageSize=10`);
             }
             await reloadPage();
         }))();
     }, [])
 
     useEffect(() => {
+        (async () => {
+            navigate(`/nodes?pageNo=${pageNo}&searchQuery=${searchQuery}&pageSize=${pageSize}`);
+            await reloadPage();
+        })();
+    }, [pageNo, searchQuery, pageSize])
+
+    useEffect(() => {
         if (Array.isArray(selectedRows) && (selectedRows.length > 0)) {
             let selectedRowCnt = selectedRows.filter(row => row.checked === true).length;
+            let new_state = {};
             if (selectedRowCnt === 1) {
-                setSidebarInquireEnabled(prev => ({ ...prev, trash: true, edit: true, more: true }));
+                new_state = { trash: true, edit: true, more: true };
             } else if (selectedRowCnt > 1) {
-                setSidebarInquireEnabled(prev => ({ ...prev, trash: true, edit: false, more: true }));
+                new_state = { trash: true, edit: false, more: true };
             } else {
-                setSidebarInquireEnabled(prev => ({ ...prev, trash: false, edit: false, more: false }));
+                new_state = { trash: false, edit: false, more: false };
             }
+            setSidebarInquireEnabled(prev => ({ ...prev, ...new_state, previous: true, next: true }));
         }
     }, [selectedRows])
 
@@ -111,8 +124,8 @@ export function NodeServiceProvider({ children }) {
         {
             name: "refresh",
             faIcon: faRefresh,
-            iconEnabledClass: "text-gray-500",
-            iconDisabledClass: "text-gray-300",
+            iconEnabledClass: "text-gray-500 h-4 w-4",
+            iconDisabledClass: "text-gray-300 h-4 w-4",
             bgEnabledClass: "hover:bg-gray-200",
             bgDisabledClass: ""
         },
@@ -122,35 +135,59 @@ export function NodeServiceProvider({ children }) {
         {
             name: "plus",
             faIcon: faPlus,
-            iconEnabledClass: "text-gray-500",
-            iconDisabledClass: "text-gray-300",
+            iconEnabledClass: "text-gray-500 h-4 w-4",
+            iconDisabledClass: "text-gray-300 h-4 w-4",
             bgEnabledClass: "hover:bg-gray-200",
             bgDisabledClass: ""
         },
         {
             name: "edit",
             faIcon: faEdit,
-            iconEnabledClass: "text-gray-500",
-            iconDisabledClass: "text-gray-300",
+            iconEnabledClass: "text-gray-500 h-4 w-4",
+            iconDisabledClass: "text-gray-300 h-4 w-4",
             bgEnabledClass: "hover:bg-gray-200",
             bgDisabledClass: ""
         },
         {
             name: "trash",
             faIcon: faTrashAlt,
-            iconEnabledClass: "text-gray-500",
-            iconDisabledClass: "text-gray-300",
+            iconEnabledClass: "text-gray-500  h-4 w-4 ",
+            iconDisabledClass: "text-gray-300  h-4 w-4",
             bgEnabledClass: "hover:bg-gray-200",
             bgDisabledClass: ""
         },
         {
             name: "more",
             faIcon: faEllipsisV,
-            iconEnabledClass: "text-gray-500",
-            iconDisabledClass: "text-gray-300",
+            iconEnabledClass: "text-gray-500 h-4 w-4 ",
+            iconDisabledClass: "text-gray-300 h-4 w-4",
             bgEnabledClass: "hover:bg-gray-200",
             bgDisabledClass: ""
-        }
+        },
+        {
+            name: "_split_",
+        },
+        {
+            name: "previous",
+            faIcon: faAngleRight,
+            iconEnabledClass: "text-gray-500 h-4 w-4 -rotate-90",
+            iconDisabledClass: "text-gray-300 h-4 w-4 -rotate-90",
+            bgEnabledClass: "hover:bg-gray-200",
+            bgDisabledClass: ""
+        },
+        {
+            name: "_text_",
+            value: pageNo,
+            onChange: (val) => setPageNo(val)
+        },
+        {
+            name: "next",
+            faIcon: faAngleRight,
+            iconEnabledClass: "text-gray-500 h-4 w-4 rotate-90",
+            iconDisabledClass: "text-gray-300 h-4 w-4 rotate-90",
+            bgEnabledClass: "hover:bg-gray-200",
+            bgDisabledClass: ""
+        },
     ];
 
     const sidebarClickHandler = async (action) => {
@@ -171,6 +208,12 @@ export function NodeServiceProvider({ children }) {
                 break;
             case "edit":
                 await editRecord(selectedRows.filter(row => row.checked)[0]);
+                break;
+            case "previous":
+                setPageNo(prev => parseInt(prev) - 1)
+                break;
+            case "next":
+                setPageNo(prev => parseInt(prev) + 1)
                 break;
 
             default:
@@ -316,7 +359,9 @@ export function NodeServiceProvider({ children }) {
         selectedRows,
         storeRecord,
         updateRecord,
-        apiErrors
+        apiErrors,
+        pageNo,
+        setPageNo
     }
 
     return (
