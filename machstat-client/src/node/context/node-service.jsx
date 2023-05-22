@@ -1,8 +1,10 @@
-import { faEdit, faPlus, faRefresh, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faEllipsisV, faPlus, faRefresh, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import React, { useContext, useEffect, useState } from 'react';
 import axios from '../../_api/axios';
 import { useMessageBoxService } from "../../_contexts/MessageBoxContext";
 import { usePageStateService } from '../../_contexts/PageStateContext';
+import { useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const ServiceContext = React.createContext();
 
@@ -11,8 +13,10 @@ export function useNodeService() {
 }
 
 export function NodeServiceProvider({ children }) {
+    const [searchParams] = useSearchParams();
     const { MessageBox } = useMessageBoxService();
     const { PageState } = usePageStateService();
+    const navigate = useNavigate();
 
     const emptyObject = {
         guid: '',
@@ -43,10 +47,12 @@ export function NodeServiceProvider({ children }) {
     const [processing, setProcessing] = useState(false);
     const [apiErrors, setApiErrors] = useState({});
     const [dialogMode, setDialogMode] = useState(DialogMode.create);
+    const [pageNo, setPageNo] = useState(searchParams.get("pageNo"));
+    const [searchQuery, setSearchQuery] = useState(searchParams.get("searchQuery") || "");
 
     const reloadPage = async () => {
         try {
-            let res = await axios.get("/api/nodes");
+            let res = await axios.get(`/api/nodes?pageNo=${pageNo}&searchQuery=${searchQuery}`);
             if (res.data.hasOwnProperty("statuses")) {
                 setStasuses([null, ...res.data.statuses]);
             }
@@ -67,6 +73,10 @@ export function NodeServiceProvider({ children }) {
 
     useEffect(() => {
         ((async () => {
+            if (pageNo === null) {
+                setPageNo(1);
+                navigate(`/nodes?pageNo=1&searchQuery=`);
+            }
             await reloadPage();
         }))();
     }, [])
@@ -75,11 +85,11 @@ export function NodeServiceProvider({ children }) {
         if (Array.isArray(selectedRows) && (selectedRows.length > 0)) {
             let selectedRowCnt = selectedRows.filter(row => row.checked === true).length;
             if (selectedRowCnt === 1) {
-                setSidebarInquireEnabled(prev => ({ ...prev, trash: true, edit: true }));
+                setSidebarInquireEnabled(prev => ({ ...prev, trash: true, edit: true, more: true }));
             } else if (selectedRowCnt > 1) {
-                setSidebarInquireEnabled(prev => ({ ...prev, trash: true, edit: false }));
+                setSidebarInquireEnabled(prev => ({ ...prev, trash: true, edit: false, more: true }));
             } else {
-                setSidebarInquireEnabled(prev => ({ ...prev, trash: false, edit: false }));
+                setSidebarInquireEnabled(prev => ({ ...prev, trash: false, edit: false, more: false }));
             }
         }
     }, [selectedRows])
@@ -128,6 +138,14 @@ export function NodeServiceProvider({ children }) {
         {
             name: "trash",
             faIcon: faTrashAlt,
+            iconEnabledClass: "text-gray-500",
+            iconDisabledClass: "text-gray-300",
+            bgEnabledClass: "hover:bg-gray-200",
+            bgDisabledClass: ""
+        },
+        {
+            name: "more",
+            faIcon: faEllipsisV,
             iconEnabledClass: "text-gray-500",
             iconDisabledClass: "text-gray-300",
             bgEnabledClass: "hover:bg-gray-200",
