@@ -1,4 +1,4 @@
-import { faClose, faFilter } from "@fortawesome/free-solid-svg-icons";
+import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { StatusIndicator, TableSidebar } from "../../_components";
 import { useNodeService } from "../context/node-service"
@@ -10,22 +10,18 @@ export default function NodeOverview() {
         sidebarClickHandler,
         statuses,
         filterValues,
-        handleFilter,
         sidebarInquireEnabled,
         setSelectAllChecked,
         setFilterValues,
         localData,
         rowCheckboxClicked,
-        selectedRows,
-        pageNo,
-        setPageNo
+        selectedRows
     } = useNodeService();
 
     return (
         <div className=" h-full w-1/2 bg-white">
-            <div className="text-lg text-center w-full pt-2 pb-1 mb-2 font-semibold border-b"></div>
             <div className="flex items-start">
-                <TableSidebar pageNo={pageNo} setPageNo={setPageNo} sidebarButtons={sidebarButtons} className="rounded-lg py-1 bg-gray-100 px-1 " inquireEnabled={sidebarInquireEnabled} clickHandler={(action) => sidebarClickHandler(action)} />
+                <TableSidebar sidebarButtons={sidebarButtons} className="rounded-lg py-1 bg-gray-100 px-1 " inquireEnabled={sidebarInquireEnabled} clickHandler={(action) => sidebarClickHandler(action)} />
                 <div className="w-full pl-2 font-inter">
                     <div className='w-full flex items-center bg-gray-100 rounded-t-lg h-7'>
                         <div className='w-12 flex items-center justify-center'>

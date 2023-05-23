@@ -1,4 +1,4 @@
-import { faAngleRight, faEdit, faEllipsisV, faPlus, faRefresh, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faAngleRight, faAnglesRight, faEdit, faPlus, faRefresh, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import React, { useContext, useEffect, useState } from 'react';
 import axios from '../../_api/axios';
 import { useMessageBoxService } from "../../_contexts/MessageBoxContext";
@@ -23,8 +23,6 @@ export function NodeServiceProvider({ children }) {
         status: ''
     };
 
-    const _sidebarInquireInit = { refresh: true, plus: true, edit: false, trash: false };
-
     const addCheckedWithFalse = (_data) => {
         let ret = [..._data].map(item => ({ id: item.id, checked: false }))
         return ret;
@@ -37,7 +35,7 @@ export function NodeServiceProvider({ children }) {
 
     const [selectAllChecked, setSelectAllChecked] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
-    const [sidebarInquireEnabled, setSidebarInquireEnabled] = useState(_sidebarInquireInit);
+    const [sidebarInquireEnabled, setSidebarInquireEnabled] = useState();
     const [serverData, setServerData] = useState([]);
     const [localData, setLocalData] = useState([]);
     const [filterValues, setFilterValues] = useState(emptyObject);
@@ -51,7 +49,18 @@ export function NodeServiceProvider({ children }) {
     const [pageSize, setPageSize] = useState(searchParams.get("pageSize"));
     const [searchQuery, setSearchQuery] = useState(searchParams.get("searchQuery") || "");
 
-    const reloadPage = async () => {
+    useEffect(() => {
+        ((async () => {
+            if (pageNo === null) {
+                setPageNo(1);
+                setPageSize(10);
+                navigate(`/nodes?pageNo=1&searchQuery=&pageSize=10`);
+            }
+            await refreshPage();
+        }))();
+    }, [])
+
+    const refreshPage = async () => {
         try {
             PageState.setWaiting(true);
             let res = await axios.get(`/api/nodes?pageNo=${pageNo}&searchQuery=${searchQuery}&pageSize=${pageSize}`);
@@ -75,35 +84,24 @@ export function NodeServiceProvider({ children }) {
     }, [filterValues])
 
     useEffect(() => {
-        ((async () => {
-            if (pageNo === null) {
-                setPageNo(1);
-                setPageSize(10);
-                navigate(`/nodes?pageNo=1&searchQuery=&pageSize=10`);
-            }
-            await reloadPage();
-        }))();
-    }, [])
-
-    useEffect(() => {
         (async () => {
             navigate(`/nodes?pageNo=${pageNo}&searchQuery=${searchQuery}&pageSize=${pageSize}`);
-            await reloadPage();
+            await refreshPage();
         })();
     }, [pageNo, searchQuery, pageSize])
 
     useEffect(() => {
         if (Array.isArray(selectedRows) && (selectedRows.length > 0)) {
             let selectedRowCnt = selectedRows.filter(row => row.checked === true).length;
-            let new_state = {};
+            let new_state = {refresh: true, plus: true, previous: true, next: true};
             if (selectedRowCnt === 1) {
-                new_state = { trash: true, edit: true, more: true };
+                new_state = { ...new_state, trash: true, edit: true, more: false };
             } else if (selectedRowCnt > 1) {
-                new_state = { trash: true, edit: false, more: true };
+                new_state = { ...new_state, trash: true, edit: false, more: false };
             } else {
-                new_state = { trash: false, edit: false, more: false };
+                new_state = { ...new_state, trash: false, edit: false, more: false };
             }
-            setSidebarInquireEnabled(prev => ({ ...prev, ...new_state, previous: true, next: true }));
+            setSidebarInquireEnabled(prev => ({ ...prev, ...new_state }));
         }
     }, [selectedRows])
 
@@ -124,10 +122,10 @@ export function NodeServiceProvider({ children }) {
         {
             name: "refresh",
             faIcon: faRefresh,
-            iconEnabledClass: "text-gray-500 h-4 w-4",
-            iconDisabledClass: "text-gray-300 h-4 w-4",
-            bgEnabledClass: "hover:bg-gray-200",
-            bgDisabledClass: ""
+            iconEnabledClass: "text-gray-700 h-4 w-4 p-3 hover:text-pink-600a",
+            iconDisabledClass: "text-gray-300 h-4 w-4 p-3",
+            buttonEnabledClass: "hover:bg-gray-200",
+            buttonDisabledClass: ""
         },
         {
             name: "_split_",
@@ -135,34 +133,34 @@ export function NodeServiceProvider({ children }) {
         {
             name: "plus",
             faIcon: faPlus,
-            iconEnabledClass: "text-gray-500 h-4 w-4",
-            iconDisabledClass: "text-gray-300 h-4 w-4",
-            bgEnabledClass: "hover:bg-gray-200",
-            bgDisabledClass: ""
+            iconEnabledClass: "text-gray-700 h-4 w-4 p-3 hover:text-pink-600a",
+            iconDisabledClass: "text-gray-300 h-4 w-4 p-3",
+            buttonEnabledClass: "hover:bg-gray-200",
+            buttonDisabledClass: ""
         },
         {
             name: "edit",
             faIcon: faEdit,
-            iconEnabledClass: "text-gray-500 h-4 w-4",
-            iconDisabledClass: "text-gray-300 h-4 w-4",
-            bgEnabledClass: "hover:bg-gray-200",
-            bgDisabledClass: ""
+            iconEnabledClass: "text-gray-700 h-4 w-4 p-3 hover:text-pink-600a",
+            iconDisabledClass: "text-gray-300 h-4 w-4 p-3",
+            buttonEnabledClass: "hover:bg-gray-200",
+            buttonDisabledClass: ""
         },
         {
             name: "trash",
             faIcon: faTrashAlt,
-            iconEnabledClass: "text-gray-500  h-4 w-4 ",
-            iconDisabledClass: "text-gray-300  h-4 w-4",
-            bgEnabledClass: "hover:bg-gray-200",
-            bgDisabledClass: ""
+            iconEnabledClass: "text-gray-700 h-4 w-4 p-3 hover:text-pink-600a",
+            iconDisabledClass: "text-gray-300 h-4 w-4 p-3",
+            buttonEnabledClass: "hover:bg-gray-200",
+            buttonDisabledClass: ""
         },
         {
             name: "more",
-            faIcon: faEllipsisV,
-            iconEnabledClass: "text-gray-500 h-4 w-4 ",
-            iconDisabledClass: "text-gray-300 h-4 w-4",
-            bgEnabledClass: "hover:bg-gray-200",
-            bgDisabledClass: ""
+            faIcon: faAnglesRight,
+            iconEnabledClass: "text-gray-700 h-4 w-4 p-3 hover:text-pink-600a ",
+            iconDisabledClass: "text-gray-300 h-4 w-4 p-3",
+            buttonEnabledClass: "hover:bg-gray-200",
+            buttonDisabledClass: ""
         },
         {
             name: "_split_",
@@ -170,10 +168,10 @@ export function NodeServiceProvider({ children }) {
         {
             name: "previous",
             faIcon: faAngleRight,
-            iconEnabledClass: "text-gray-500 h-4 w-4 -rotate-90",
+            iconEnabledClass: "text-gray-700 h-4 w-4 p-3 hover:text-pink-600a -rotate-90",
             iconDisabledClass: "text-gray-300 h-4 w-4 -rotate-90",
-            bgEnabledClass: "hover:bg-gray-200",
-            bgDisabledClass: ""
+            buttonEnabledClass: "hover:bg-gray-200",
+            buttonDisabledClass: ""
         },
         {
             name: "_text_",
@@ -183,10 +181,10 @@ export function NodeServiceProvider({ children }) {
         {
             name: "next",
             faIcon: faAngleRight,
-            iconEnabledClass: "text-gray-500 h-4 w-4 rotate-90",
-            iconDisabledClass: "text-gray-300 h-4 w-4 rotate-90",
-            bgEnabledClass: "hover:bg-gray-200",
-            bgDisabledClass: ""
+            iconEnabledClass: "text-gray-700 h-4 w-4 p-3 hover:text-pink-600a rotate-90",
+            iconDisabledClass: "text-gray-300 h-4 w-4 p-3 rotate-90",
+            buttonEnabledClass: "hover:bg-gray-200",
+            buttonDisabledClass: ""
         },
     ];
 
@@ -201,7 +199,7 @@ export function NodeServiceProvider({ children }) {
                 setShowCrudDialog(true);
                 break;
             case "refresh":
-                reloadPage();
+                refreshPage();
                 break;
             case "trash":
                 await deleteRecords(selectedRows.filter(row => row.checked));
@@ -219,6 +217,38 @@ export function NodeServiceProvider({ children }) {
             default:
                 break;
         }
+    }
+
+    // start CRUD
+    const storeRecord = async (data) => {
+        setApiErrors({})
+        let res = await MessageBox.show({
+            title: "Addition of records",
+            message:
+                <div>
+                    Record will be added to the Nodes collection.
+                    <div className='pt-3'>Do you want to proceed?</div>
+                </div>,
+            type: MessageBox.Constants.Type.Information,
+            buttons: MessageBox.Constants.Buttons.YesNo
+        });
+        if (res === MessageBox.Constants.Result.Yes) {
+            try {
+                PageState.setWaiting(true);
+                let res = await axios.post('/api/nodes', data);
+                let _serverData = [res.data.data, ...serverData];
+                setServerData(_serverData);
+                setSelectedRows(addCheckedWithFalse(_serverData));
+                setLocalData([..._serverData]);
+                setShowCrudDialog(false);
+                setApiErrors({})
+            } catch (e) {
+                setApiErrors(e.response.data.errors);
+            }
+        } else {
+            setApiErrors({})
+        }
+        PageState.setWaiting(false);
     }
 
     const editRecord = async (row) => {
@@ -273,10 +303,11 @@ export function NodeServiceProvider({ children }) {
                 return acc;
             }, []);
             await axios.patch(`/api/nodes/deleteBatch`, row_ids);
-            await reloadPage();
+            await refreshPage();
             PageState.setWaiting(false);
         }
     }
+    // end CRUD
 
     const handleFilter = () => {
         setSelectedRows(prev => setAllCheckBoxes(prev, false));
@@ -307,37 +338,6 @@ export function NodeServiceProvider({ children }) {
     const closeCrudDialog = () => {
         setDialogData();
         setShowCrudDialog(false);
-    }
-
-    const storeRecord = async (data) => {
-        setApiErrors({})
-        let res = await MessageBox.show({
-            title: "Addition of records",
-            message:
-                <div>
-                    Record will be added to the Nodes collection.
-                    <div className='pt-3'>Do you want to proceed?</div>
-                </div>,
-            type: MessageBox.Constants.Type.Information,
-            buttons: MessageBox.Constants.Buttons.YesNo
-        });
-        if (res === MessageBox.Constants.Result.Yes) {
-            try {
-                PageState.setWaiting(true);
-                let res = await axios.post('/api/nodes', data);
-                let _serverData = [res.data.data, ...serverData];
-                setServerData(_serverData);
-                setSelectedRows(addCheckedWithFalse(_serverData));
-                setLocalData([..._serverData]);
-                setShowCrudDialog(false);
-                setApiErrors({})
-            } catch (e) {
-                setApiErrors(e.response.data.errors);
-            }
-        } else {
-            setApiErrors({})
-        }
-        PageState.setWaiting(false);
     }
 
     const value = {
