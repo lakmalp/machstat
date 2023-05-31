@@ -1,13 +1,15 @@
 import AuthenticatedLayout from "../_containers/authenticated-layout";
-import { ServiceProvider } from "./context/device-service";
-import DeviceOverview from "./layouts/devices-overview";
+import { DeviceServiceProvider } from "./util/device-service";
+import DeviceDialog from "./layouts/device-dialog";
+import DeviceOverview from "./layouts/device-overview";
 
 export default function Device(props) {
     return (
         <AuthenticatedLayout>
-            <ServiceProvider>
+            <DeviceServiceProvider>
+                <DeviceDialog />
                 <DeviceOverview />
-            </ServiceProvider>
+            </DeviceServiceProvider>
         </AuthenticatedLayout>
     )
 }

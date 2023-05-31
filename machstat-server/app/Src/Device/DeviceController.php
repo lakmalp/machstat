@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Src\Node;
+namespace App\Src\Device;
 
 use App\Http\Controllers\Controller;
+use App\Src\Node\Node;
 use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -10,12 +11,12 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class NodeController extends Controller
+class DeviceController extends Controller
 {
     private $validator;
 
     private $repository;
-    function __construct(NodeValidator $validator, NodeRepository $repository)
+    function __construct(DeviceValidator $validator, DeviceRepository $repository)
     {
         $this->validator = $validator;
         $this->repository = $repository;
@@ -29,9 +30,9 @@ class NodeController extends Controller
 
         $starting_point = $per_page * ($current_page - 1);
 
-        $total = Node::orderBy('updated_at', 'DESC')->get()->count();
+        $total = Device::orderBy('updated_at', 'DESC')->get()->count();
 
-        $data = Node::orderBy('updated_at', 'DESC')
+        $data = Device::orderBy('updated_at', 'DESC')
             ->take($per_page)
             ->skip($starting_point)
             ->get()
@@ -40,7 +41,7 @@ class NodeController extends Controller
         $array= new Paginator($data, $per_page, $current_page);
 
         $params = collect([
-            'statuses' => Node::$nodeStatuses, 
+            'nodes' => Node::get(), 
             'total' => $total,
             'count' => $array->count(),
             'is_last_page' => (($array->count() < $per_page) || (($current_page - 1) * $per_page) + $array->count() == $total)
@@ -53,62 +54,59 @@ class NodeController extends Controller
 
     public function create(Request $request): JsonResponse
     {
-        $guid = str_pad(rand(0, 9999), 4, "0", STR_PAD_LEFT) . "-" .
-            str_pad(rand(0, 9999), 4, "0", STR_PAD_LEFT) . "-" .
-            str_pad(rand(0, 9999), 4, "0", STR_PAD_LEFT) . "-" .
-            str_pad(rand(0, 9999), 4, "0", STR_PAD_LEFT);
-
-        $node = new Node;
-        $node->guid = $guid;
-        $node->status = 'NotConfigurred';
-        return response()->json(['statuses' => Node::$nodeStatuses, 'data' => $node]);
+        Log::info(Device::select('node_id')->pluck('node_id'));
+        $nodes = Node::whereNotIn('id', Device::select('node_id')->pluck('node_id'))->get();
+        $device = new Device;
+        return response()->json(['nodes' => $nodes, 'data' => $device]);
     }
 
     public function store(Request $request): JsonResponse
     {
-        abort_if($request->user()->cannot('create-node', Node::class), 403);
+        abort_if($request->user()->cannot('create-device', Device::class), 403);
 
         $validated = $this->validator->validateCreate($request);
 
-        $node = $this->repository->createNode($validated);
+        $device = $this->repository->createDevice($validated);
 
         // SendOrderToVendor::dispatch($order)->onQueue('orders');
 
         // NewOrderPlaced::dispatch($order);
         
-        return response()->json(['data' => $node]);
+        return response()->json(['data' => $device]);
     }
 
-    public function edit(Node $node): JsonResponse
+    public function edit(Device $device): JsonResponse
     {
+        $nodes = Node::get();
+
         return response()->json([
-            'statuses' => Node::$nodeStatuses,
-            'data' => $node
+            'nodes' => $nodes,
+            'data' => $device
         ]);
     }
 
-    public function update(Request $request, Node $node): JsonResponse
+    public function update(Request $request, Device $device): JsonResponse
     {
-        abort_if($request->user()->cannot('edit-node', Node::class), 403);
+        abort_if($request->user()->cannot('edit-device', Device::class), 403);
 
         $validated = $this->validator->validateUpdate($request);
 
-        $node = $this->repository->updateNode($node, $validated);
+        $device = $this->repository->updateDevice($device, $validated);
 
         // SendOrderToVendor::dispatch($order)->onQueue('orders');
 
         // NewOrderPlaced::dispatch($order);
         
-        return response()->json(['data' => $node]);
+        return response()->json(['data' => $device]);
     }
 
-    public function delete(Node $node): bool
+    public function delete(Device $device): bool
     {
-        return $node->delete();
+        return $device->delete();
     }
     public function deleteBatch(Request $request): JsonResponse
     {
-        Node::destroy($request->all());
+        Device::destroy($request->all());
         return response()->json([]);
     }
 }

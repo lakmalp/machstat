@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Button } from "../../_components";
 import DialogBox from "../../_components/dialog-box/dialog-box";
-import { useNodeService } from "../context/node-service";
+import { useNodeService } from "../util/node-service";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 export default function NodeDialog() {
-    const { dialogMode, showCrudDialog, closeCrudDialog, storeRecord, dialogData, processing, updateRecord, apiErrors } = useNodeService();
+    const { dialogMode, showCrudDialog, closeCrudDialog, storeRecord, dialogData, pageState, updateRecord, apiErrors } = useNodeService();
     const [localData, setLocalData] = useState();
     useEffect(() => {
         setLocalData(dialogData?.data);
@@ -35,13 +37,18 @@ export default function NodeDialog() {
                 </DialogBox.Content>
                 <DialogBox.Commands>
                     <Button
-                        disabled={processing}
-                        caption="Save"
+                        disabled={pageState.waiting}
+                        caption={
+                            <>
+                                {(pageState.waiting) && <FontAwesomeIcon icon={faSpinner} className="animate-spin" />}
+                                {(!pageState.waiting) && <div>Save</div>}
+                                </>
+                        }
                         name="save"
                         onClick={() => {
                             if (dialogMode === "create") {
                                 storeRecord(localData)
-                            } else if  (dialogMode === "edit") {
+                            } else if (dialogMode === "edit") {
                                 updateRecord(localData)
                             }
                         }}

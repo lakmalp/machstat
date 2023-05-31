@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function TableSidebar({ className, sidebarButtons, inquireEnabled, clickHandler }) {
+export default function TableSidebar({ className, sidebarButtons, inquireEnabled }) {
     return (
         <div className="flex">
             <div className={`flex flex-col ${className}`}>
@@ -24,7 +24,7 @@ export default function TableSidebar({ className, sidebarButtons, inquireEnabled
                                         className={"flex justify-center items-center font-semibold text-sm rounded-full " + (((typeof inquireEnabled === 'undefined') ? false : inquireEnabled[but.name]) ? but.buttonEnabledClass : but.buttonDisabledClass)}>
                                         <FontAwesomeIcon onClick={() => {
                                             if (!((typeof inquireEnabled === 'undefined') ? true : !inquireEnabled[but.name])) {
-                                                clickHandler(but.name);
+                                                but.callback();
                                             }
                                         }} className={" " + (((typeof inquireEnabled === 'undefined') ? false : inquireEnabled[but.name]) ? but.iconEnabledClass : but.iconDisabledClass)} icon={but.faIcon} />
                                     </button>
