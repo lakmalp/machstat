@@ -12,7 +12,7 @@ export function useDeviceService() {
     return useContext(ServiceContext);
 }
 
-export function DeviceServiceProvider({ children }) {    
+export function DeviceServiceProvider({ children }) {
     const emptyObject = {
         name: '',
         node_id: ''
@@ -22,8 +22,8 @@ export function DeviceServiceProvider({ children }) {
         create: "create",
         edit: "edit"
     };
-    
-    let sidebar_button_states = {refresh: true, plus: true, previous: true, next: true};
+
+    let sidebar_button_states = { refresh: true, plus: true, previous: true, next: true };
 
     const [searchParams] = useSearchParams();
     const { MessageBox } = useMessageBoxService();
@@ -118,7 +118,7 @@ export function DeviceServiceProvider({ children }) {
             iconDisabledClass: "text-gray-300 h-4 w-4 p-3 rotate-90",
             buttonEnabledClass: "hover:bg-gray-200",
             buttonDisabledClass: "",
-            callback: () =>  setPageNo(prev => parseInt(prev) + 1)
+            callback: () => setPageNo(prev => parseInt(prev) + 1)
         },
     ];
 
@@ -152,19 +152,36 @@ export function DeviceServiceProvider({ children }) {
     }
 
     const handleFilter = () => {
+        const _getValue = (data, field) => {
+            const keys = field.split(".");
+            try {
+                return keys.reduce((acc, curr, i) => {
+                    if (i === 0) {
+                        return data[curr];
+                    }
+                    return acc[curr];
+                }, "")
+            } catch (e) {
+                return "";
+            }
+        }
+
         setSelectedRows(prev => setAllCheckBoxes(prev, false));
         let _localData = [...serverData];
-        Object.entries(filterValues).map(([field, value]) => {
+        let filterArr = Object.entries(filterValues);
+        filterArr.map(([field, value]) => {
             switch (field) {
                 case "name":
-                case "node_id":
+                case "node.guid":
+                case "node.status":
                     if (value !== '') {
                         _localData = _localData.filter(_data => {
                             try {
                                 var re = new RegExp(value, 'g');
-                                let res = _data[field].match(re);
+                                let res = _getValue(_data, field).toString().match(re);
                                 return (res !== null)
                             } catch (e) {
+                                console.error(e);
                                 return true;
                             }
                         })
@@ -327,6 +344,7 @@ export function DeviceServiceProvider({ children }) {
         setSelectAllChecked,
         setFilterValues,
         localData,
+        serverData,
         rowCheckboxClicked,
         showCrudDialog,
         closeCrudDialog,

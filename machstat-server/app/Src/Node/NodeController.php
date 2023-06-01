@@ -29,9 +29,9 @@ class NodeController extends Controller
 
         $starting_point = $per_page * ($current_page - 1);
 
-        $total = Node::orderBy('updated_at', 'DESC')->get()->count();
+        $total = Node::get()->count();
 
-        $data = Node::orderBy('updated_at', 'DESC')
+        $data = Node::orderBy('created_at', 'ASC')
             ->take($per_page)
             ->skip($starting_point)
             ->get()

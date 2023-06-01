@@ -28,7 +28,6 @@ export default function NodeOverview() {
                 <div className="w-full pl-2 font-inter">
                     <div className='w-full flex items-center bg-gray-100 rounded-t-lg h-7'>
                         <div className='w-12 flex items-center justify-center'>
-                            {/* <FontAwesomeIcon icon={faFilter} className="text-gray-400" /> */}
                         </div>
                         <div className="w-full grid grid-cols-12 gap-4 items-center bg-gray-100 rounded-tr-lg">
                             <div className="text-left col-span-7 text-xs font-semibold text-gray-500">GUID</div>

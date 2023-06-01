@@ -30,9 +30,10 @@ class DeviceController extends Controller
 
         $starting_point = $per_page * ($current_page - 1);
 
-        $total = Device::orderBy('updated_at', 'DESC')->get()->count();
+        $total = Device::get()->count();
 
-        $data = Device::orderBy('updated_at', 'DESC')
+        $data = Device::orderBy('created_at', 'ASC')
+            ->with(['node'])
             ->take($per_page)
             ->skip($starting_point)
             ->get()
@@ -67,6 +68,7 @@ class DeviceController extends Controller
         $validated = $this->validator->validateCreate($request);
 
         $device = $this->repository->createDevice($validated);
+        $device->load(['node']);
 
         // SendOrderToVendor::dispatch($order)->onQueue('orders');
 
@@ -92,6 +94,7 @@ class DeviceController extends Controller
         $validated = $this->validator->validateUpdate($request);
 
         $device = $this->repository->updateDevice($device, $validated);
+        $device->load(['node']);
 
         // SendOrderToVendor::dispatch($order)->onQueue('orders');
 
