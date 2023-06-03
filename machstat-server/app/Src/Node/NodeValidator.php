@@ -11,7 +11,7 @@ class NodeValidator
     public function validateCreate(Request $request)
     {
         return validator($request->all(), [
-            'guid' => ['required', Rule::unique('nodes', 'guid')],
+            'guid' => ['required', Rule::unique('nodes', 'guid'), 'max:20'],
             'status' => ['required', Rule::in(Node::$nodeStatuses)]
         ])->after(
             fn ($validator) => $this->validateProducts($request, $validator)
@@ -21,7 +21,7 @@ class NodeValidator
     public function validateUpdate(Request $request)
     {
         return validator($request->all(), [
-            'guid' => ['required', Rule::unique('nodes', 'guid')->ignore($request->id)],
+            'guid' => ['required', Rule::unique('nodes', 'guid')->ignore($request->id), 'max:20'],
             'status' => ['required', Rule::in(Node::$nodeStatuses)]
         ])->after(
             fn ($validator) => $this->validateProducts($request, $validator)

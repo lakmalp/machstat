@@ -11,8 +11,14 @@ class DeviceValidator
     public function validateCreate(Request $request)
     {
         return validator($request->all(), [
-            'name' => ['required', 'max:100'],
-            'node_id' => ['required', 'exists:nodes,id']
+            'name' => [
+                'required',
+                'max:100'
+            ],
+            'node_id' => [
+                'required',
+                'exists:nodes,id'
+            ]
         ])->after(
             fn ($validator) => $this->validateProducts($request, $validator)
         )->validate();
@@ -21,8 +27,15 @@ class DeviceValidator
     public function validateUpdate(Request $request)
     {
         return validator($request->all(), [
-            'name' => ['required', 'max:100'],
-            'node_id' => ['required', 'exists:nodes,id']
+            'name' => [
+                'required',
+                'max:100'
+            ],
+            'node_id' => [
+                'required',
+                'exists:nodes,id',
+                Rule::unique('devices', 'node_id')->ignore($request->id)
+            ]
         ])->after(
             fn ($validator) => $this->validateProducts($request, $validator)
         )->validate();
@@ -30,6 +43,5 @@ class DeviceValidator
 
     private function validateProducts(Request $request, Validator $validator)
     {
-        
     }
 }

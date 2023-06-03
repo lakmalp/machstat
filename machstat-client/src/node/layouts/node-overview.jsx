@@ -1,25 +1,43 @@
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { StatusIndicator, TableSidebar } from "../../_components";
+import { StatusIndicator } from "../../_components";
 import { useNodeService } from "../util/node-service"
+import Table from "../../_components/table/table";
 
 export default function NodeOverview() {
 
     const {
         sidebarButtons,
-        statuses,
         filterValues,
         sidebarInquireEnabled,
         setSelectAllChecked,
         setFilterValues,
         localData,
+        serverData,
         rowCheckboxClicked,
         selectedRows
     } = useNodeService();
 
+    const columns = [
+        { name: "guid", type: "text", label: "Name", colSpan: "7", textAlign: "left" },
+        { name: "status", type: "dropdown", label: "GUID", colSpan: "5", textAlign: "left", render: <StatusIndicator /> }
+    ];
+
     return (
         <div className=" h-full w-1/2 bg-white">
-            <div className="flex items-start">
+            <Table
+                sidebarButtons={sidebarButtons}
+                sidebarInquireEnabled={sidebarInquireEnabled}
+                columns={columns}
+                localData={localData}
+                serverData={serverData}
+                filterValues={filterValues}
+                setFilterValues={setFilterValues}
+                selectedRows={selectedRows}
+                rowCheckboxClicked={rowCheckboxClicked}
+                setSelectAllChecked={setSelectAllChecked}
+            />
+            {/* <div className="flex items-start">
                 <TableSidebar
                     sidebarButtons={sidebarButtons}
                     className="rounded-lg py-1 bg-gray-100 px-1 "
@@ -59,7 +77,7 @@ export default function NodeOverview() {
                         })
                     }
                 </div>
-            </div>
+            </div> */}
         </div>
     )
 }

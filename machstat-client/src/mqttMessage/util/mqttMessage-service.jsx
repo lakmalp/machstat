@@ -8,11 +8,11 @@ import { useNavigate } from 'react-router-dom';
 
 const ServiceContext = React.createContext();
 
-export function useDeviceService() {
+export function useMqttMessageService() {
     return useContext(ServiceContext);
 }
 
-export function DeviceServiceProvider({ children }) {
+export function MqttMessageServiceProvider({ children }) {
     const emptyObject = {
         name: '',
         node_id: ''
@@ -44,7 +44,7 @@ export function DeviceServiceProvider({ children }) {
     const [pageSize, setPageSize] = useState(searchParams.get("pageSize") || 10);
     const [searchQuery, setSearchQuery] = useState(searchParams.get("searchQuery") || "");
 
-    const endPointRef = useRef("devices");
+    const endPointRef = useRef("mqttMessages");
 
     const sidebarButtons = [
         {
@@ -59,44 +59,44 @@ export function DeviceServiceProvider({ children }) {
         {
             name: "_split_",
         },
-        {
-            name: "plus",
-            faIcon: faPlus,
-            iconEnabledClass: "text-gray-700 h-4 w-4 p-3 hover:text-pink-600a",
-            iconDisabledClass: "text-gray-300 h-4 w-4 p-3",
-            buttonEnabledClass: "hover:bg-gray-200",
-            buttonDisabledClass: "",
-            callback: async () => await createRecord()
-        },
-        {
-            name: "edit",
-            faIcon: faEdit,
-            iconEnabledClass: "text-gray-700 h-4 w-4 p-3 hover:text-pink-600a",
-            iconDisabledClass: "text-gray-300 h-4 w-4 p-3",
-            buttonEnabledClass: "hover:bg-gray-200",
-            buttonDisabledClass: "",
-            callback: async () => await editRecord(selectedRows.filter(row => row.checked)[0])
-        },
-        {
-            name: "trash",
-            faIcon: faTrashAlt,
-            iconEnabledClass: "text-gray-700 h-4 w-4 p-3 hover:text-pink-600a",
-            iconDisabledClass: "text-gray-300 h-4 w-4 p-3",
-            buttonEnabledClass: "hover:bg-gray-200",
-            buttonDisabledClass: "",
-            callback: async () => await deleteRecords(selectedRows.filter(row => row.checked))
-        },
-        {
-            name: "more",
-            faIcon: faAnglesRight,
-            iconEnabledClass: "text-gray-700 h-4 w-4 p-3 hover:text-pink-600a ",
-            iconDisabledClass: "text-gray-300 h-4 w-4 p-3",
-            buttonEnabledClass: "hover:bg-gray-200",
-            buttonDisabledClass: ""
-        },
-        {
-            name: "_split_",
-        },
+        // {
+        //     name: "plus",
+        //     faIcon: faPlus,
+        //     iconEnabledClass: "text-gray-700 h-4 w-4 p-3 hover:text-pink-600a",
+        //     iconDisabledClass: "text-gray-300 h-4 w-4 p-3",
+        //     buttonEnabledClass: "hover:bg-gray-200",
+        //     buttonDisabledClass: "",
+        //     callback: async () => await createRecord()
+        // },
+        // {
+        //     name: "edit",
+        //     faIcon: faEdit,
+        //     iconEnabledClass: "text-gray-700 h-4 w-4 p-3 hover:text-pink-600a",
+        //     iconDisabledClass: "text-gray-300 h-4 w-4 p-3",
+        //     buttonEnabledClass: "hover:bg-gray-200",
+        //     buttonDisabledClass: "",
+        //     callback: async () => await editRecord(selectedRows.filter(row => row.checked)[0])
+        // },
+        // {
+        //     name: "trash",
+        //     faIcon: faTrashAlt,
+        //     iconEnabledClass: "text-gray-700 h-4 w-4 p-3 hover:text-pink-600a",
+        //     iconDisabledClass: "text-gray-300 h-4 w-4 p-3",
+        //     buttonEnabledClass: "hover:bg-gray-200",
+        //     buttonDisabledClass: "",
+        //     callback: async () => await deleteRecords(selectedRows.filter(row => row.checked))
+        // },
+        // {
+        //     name: "more",
+        //     faIcon: faAnglesRight,
+        //     iconEnabledClass: "text-gray-700 h-4 w-4 p-3 hover:text-pink-600a ",
+        //     iconDisabledClass: "text-gray-300 h-4 w-4 p-3",
+        //     buttonEnabledClass: "hover:bg-gray-200",
+        //     buttonDisabledClass: ""
+        // },
+        // {
+        //     name: "_split_",
+        // },
         {
             name: "previous",
             faIcon: faAngleRight,
@@ -249,7 +249,7 @@ export function DeviceServiceProvider({ children }) {
             title: "Addition of records",
             message:
                 <div>
-                    Record will be added to the Devices collection.
+                    Record will be added to the MqttMessages collection.
                     <div className='pt-3'>Do you want to proceed?</div>
                 </div>,
             type: MessageBox.Constants.Type.Information,

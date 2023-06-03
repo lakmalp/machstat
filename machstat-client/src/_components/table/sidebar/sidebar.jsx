@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function TableSidebar({ className, sidebarButtons, inquireEnabled }) {
+export default function Sidebar({ className, sidebarButtons, inquireEnabled }) {
     return (
         <div className="flex">
             <div className={`flex flex-col ${className}`}>

@@ -135,7 +135,7 @@ export function NodeServiceProvider({ children }) {
             PageState.setWaiting(true);
             let res = await axios.get(`/api/${endPointRef.current}?pageNo=${pageNo}&searchQuery=${searchQuery}&pageSize=${pageSize}`);
             if (res.data.hasOwnProperty("statuses")) {
-                setStasuses([null, ...res.data.statuses]);
+                setStasuses([ ...res.data.statuses]);
             }
 
             if (res.data.hasOwnProperty("data")) {
@@ -152,9 +152,24 @@ export function NodeServiceProvider({ children }) {
     }
 
     const handleFilter = () => {
+        const _getValue = (data, field) => {
+            const keys = field.split(".");
+            try {
+                return keys.reduce((acc, curr, i) => {
+                    if (i === 0) {
+                        return data[curr];
+                    }
+                    return acc[curr];
+                }, "")
+            } catch (e) {
+                return "";
+            }
+        }
+
         setSelectedRows(prev => setAllCheckBoxes(prev, false));
         let _localData = [...serverData];
-        Object.entries(filterValues).map(([field, value]) => {
+        let filterArr = Object.entries(filterValues);
+        filterArr.map(([field, value]) => {
             switch (field) {
                 case "guid":
                 case "status":
@@ -162,9 +177,10 @@ export function NodeServiceProvider({ children }) {
                         _localData = _localData.filter(_data => {
                             try {
                                 var re = new RegExp(value, 'g');
-                                let res = _data[field].match(re);
+                                let res = _getValue(_data, field).toString().match(re);
                                 return (res !== null)
                             } catch (e) {
+                                console.error(e);
                                 return true;
                             }
                         })
@@ -304,7 +320,7 @@ export function NodeServiceProvider({ children }) {
                 acc = [...acc, curr.id];
                 return acc;
             }, []);
-            await axios.patch(`/api/${endPointRef.current}/deleteBatch`, row_ids);
+            await axios.delete(`/api/${endPointRef.current}/deleteBatch`, row_ids);
             await refreshPage();
             PageState.setWaiting(false);
         }
@@ -327,6 +343,7 @@ export function NodeServiceProvider({ children }) {
         setSelectAllChecked,
         setFilterValues,
         localData,
+        serverData,
         rowCheckboxClicked,
         showCrudDialog,
         closeCrudDialog,

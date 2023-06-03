@@ -3,6 +3,6 @@ import Card from "./card/card";
 import StatusIndicator from "./status-indicator/status-indicator";
 import Error from "./error/error";
 import Loader from "./loader/loader";
-import TableSidebar from "./table-sidebar/table-sidebar";
+import TableSidebar from "./table/sidebar/sidebar";
 
 export {Button, Card, Error, Loader, StatusIndicator, TableSidebar};
