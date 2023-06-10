@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Src\Device;
+namespace App\Src\Company;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
-class DeviceValidator
+class CompanyValidator
 {
     public function validateCreate(Request $request)
     {
         return validator($request->all(), [
-            'name' => [ 'required', 'max:100' ],
-            'node_id' => [ 'required', 'exists:nodes,id']
+            'code' => ['required', Rule::unique('companies', 'code'), 'max:20'],
+            'description' => ['required', 'max:100']
         ])->after(
             fn ($validator) => $this->validateProducts($request, $validator)
         )->validate();
@@ -21,8 +21,8 @@ class DeviceValidator
     public function validateUpdate(Request $request)
     {
         return validator($request->all(), [
-            'name' => [ 'required', 'max:100' ],
-            'node_id' => [ 'required', 'exists:nodes,id', Rule::unique('devices', 'node_id')->ignore($request->id)]
+            'code' => ['required', Rule::unique('companies', 'code')->ignore($request->id), 'max:20'],
+            'description' => ['required', 'max:100']
         ])->after(
             fn ($validator) => $this->validateProducts($request, $validator)
         )->validate();
@@ -30,5 +30,6 @@ class DeviceValidator
 
     private function validateProducts(Request $request, Validator $validator)
     {
+        
     }
 }

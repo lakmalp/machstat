@@ -29,7 +29,7 @@ export default function DeviceDialog() {
                                 <option value=""></option>
                                 {
                                     dialogData && dialogData.hasOwnProperty("nodes") && Array.isArray(dialogData.nodes || "") && dialogData.nodes.map(node => {
-                                        return <option key={node.id} value={node.id}>{node.guid}</option>
+                                        return <option key={node.id} value={node.id}>{`${node.guid} - ${node.status}`}</option>
                                     })
                                 }
                             </select>

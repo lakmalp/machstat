@@ -12,6 +12,8 @@ export default function AuthenticatedLayout({ children }) {
             <PageStateServiceProvider>
                 <MessageBoxServiceProvider>
                     <div className="text-center py-3 bg-gray-100 mb-1">
+                        <Link to="/companies" className="text-sky-600 px-3 mx-3 p-1 rounded-full hover:bg-white">Companies</Link>|
+                        <Link to="/sites" className="text-sky-600 px-3 mx-3 p-1 rounded-full hover:bg-white">Sites</Link>|
                         <Link to="/devices" className="text-sky-600 px-3 mx-3 p-1 rounded-full hover:bg-white">Devices</Link>|
                         <Link className="text-sky-600 px-3 mx-3 p-1 rounded-full hover:bg-white" to="/nodes">Nodes</Link>|
                         <Link className="text-sky-600 px-3 mx-3 p-1 rounded-full hover:bg-white" to="/mqttMessages">MQTT Messages</Link>

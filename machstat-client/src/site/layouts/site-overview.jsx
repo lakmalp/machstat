@@ -1,8 +1,8 @@
 import { StatusIndicator } from "../../_components";
-import { useMqttMessageService } from "../util/mqttMessage-service"
+import { useSiteService } from "../util/site-service"
 import Table from "../../_components/table/table";
 
-export default function MqttMessageOverview() {
+export default function SiteOverview() {
 
     const {
         sidebarButtons,
@@ -14,17 +14,16 @@ export default function MqttMessageOverview() {
         serverData,
         rowCheckboxClicked,
         selectedRows
-    } = useMqttMessageService();
+    } = useSiteService();
 
     const columns = [
-        { name: "guid", type: "text", label: "GUID", colSpan: "3", textAlign: "left" },
-        { name: "body", type: "text", label: "Message Body", colSpan: "5", textAlign: "left" },
-        { name: "received_at", type: "text", label: "Received At", colSpan: "3", textAlign: "left" },
-        { name: "processed", type: "option", label: "Processed", colSpan: "1", textAlign: "left" }
+        { name: "code", type: "text", label: "Code", colSpan: "2", textAlign: "left" },
+        { name: "description", type: "text", label: "Description", colSpan: "7", textAlign: "left" },
+        { name: "site.company.code", type: "dropdown", label: "Company", colSpan: "3", textAlign: "left" }
     ];
 
     return (
-        <div className="h-full w-4/5 bg-white">
+        <div className=" h-full w-2/3 bg-white">
             <Table
                 sidebarButtons={sidebarButtons}
                 sidebarInquireEnabled={sidebarInquireEnabled}

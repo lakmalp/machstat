@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Src\Device;
+namespace App\Src\Company;
 
 use App\Http\Controllers\Controller;
-use App\Src\Node\Node;
 use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -11,12 +10,12 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class DeviceController extends Controller
+class CompanyController extends Controller
 {
     private $validator;
 
     private $repository;
-    function __construct(DeviceValidator $validator, DeviceRepository $repository)
+    function __construct(CompanyValidator $validator, CompanyRepository $repository)
     {
         $this->validator = $validator;
         $this->repository = $repository;
@@ -30,10 +29,9 @@ class DeviceController extends Controller
 
         $starting_point = $per_page * ($current_page - 1);
 
-        $total = Device::get()->count();
+        $total = Company::get()->count();
 
-        $data = Device::orderBy('created_at', 'ASC')
-            ->with(['node'])
+        $data = Company::orderBy('created_at', 'ASC')
             ->take($per_page)
             ->skip($starting_point)
             ->get()
@@ -42,7 +40,6 @@ class DeviceController extends Controller
         $array= new Paginator($data, $per_page, $current_page);
 
         $params = collect([
-            'nodes' => Node::get(), 
             'total' => $total,
             'count' => $array->count(),
             'is_last_page' => (($array->count() < $per_page) || (($current_page - 1) * $per_page) + $array->count() == $total)
@@ -55,60 +52,54 @@ class DeviceController extends Controller
 
     public function create(Request $request): JsonResponse
     {
-        $nodes = Node::whereNotIn('id', Device::select('node_id')->pluck('node_id'))->get();
-        $device = new Device;
-        return response()->json(['nodes' => $nodes, 'data' => $device]);
+        $company = new Company;
+        return response()->json(['data' => $company]);
     }
 
     public function store(Request $request): JsonResponse
     {
-        abort_if($request->user()->cannot('create-device', Device::class), 403);
+        abort_if($request->user()->cannot('create-company', Company::class), 403);
 
         $validated = $this->validator->validateCreate($request);
 
-        $device = $this->repository->createDevice($validated);
-        $device->load(['node']);
+        $company = $this->repository->createCompany($validated);
 
         // SendOrderToVendor::dispatch($order)->onQueue('orders');
 
         // NewOrderPlaced::dispatch($order);
         
-        return response()->json(['data' => $device]);
+        return response()->json(['data' => $company]);
     }
 
-    public function edit(Device $device): JsonResponse
+    public function edit(Company $company): JsonResponse
     {
-        $nodes = Node::get();
-
         return response()->json([
-            'nodes' => $nodes,
-            'data' => $device
+            'data' => $company
         ]);
     }
 
-    public function update(Request $request, Device $device): JsonResponse
+    public function update(Request $request, Company $company): JsonResponse
     {
-        abort_if($request->user()->cannot('edit-device', Device::class), 403);
+        abort_if($request->user()->cannot('edit-company', Company::class), 403);
 
         $validated = $this->validator->validateUpdate($request);
 
-        $device = $this->repository->updateDevice($device, $validated);
-        $device->load(['node']);
+        $company = $this->repository->updateCompany($company, $validated);
 
         // SendOrderToVendor::dispatch($order)->onQueue('orders');
 
         // NewOrderPlaced::dispatch($order);
         
-        return response()->json(['data' => $device]);
+        return response()->json(['data' => $company]);
     }
 
-    public function delete(Device $device): bool
+    public function delete(Company $company): bool
     {
-        return $device->delete();
+        return $company->delete();
     }
     public function deleteBatch(Request $request): JsonResponse
     {
-        Device::destroy($request->all());
+        Company::destroy($request->all());
         return response()->json([]);
     }
 }

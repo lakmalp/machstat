@@ -4,6 +4,14 @@ module.exports = {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    {
+      pattern: /grid-cols-./,
+    },
+    {
+      pattern: /col-span-./,
+    }
+  ],
   theme: {
     extend: {},
     fontFamily: {
