@@ -1,5 +1,5 @@
 import { useRef } from "react"
-import { Link  } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button, Card } from "../../../_components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebook, faGoogle, faTwitter } from "@fortawesome/free-brands-svg-icons";
@@ -19,7 +19,7 @@ export default function LoginForm(props) {
         <div className="max-w-sm mx-auto pt-6">
             <div className="flex justify-center py-3 mb-3">
                 <h1 className="text-3xl font-inter font-bold">Machine<span className="text-pink-700 uppercase ml-1 px-2 border rounded-full bg-white shadow-inner">Stat</span></h1>
-                </div>
+            </div>
             <h2 className="font-inter text-2xl font-bold text-gray-800 text-center pb-6">Sign in to your account</h2>
             <Card className="p-5 bg-white rounded-lg shadow">
                 <Card.Body>
@@ -33,6 +33,9 @@ export default function LoginForm(props) {
                             <label className="block text-sm font-inter font-semibold text-gray-700">Password</label>
                             <input ref={passwordRef} disabled={processing} type="password" name="password" className="px-2 h-8 mt-1 border rounded-md w-full font-inter text-gray-500 focus:outline-1 outline-pink-400 focus:ring-2 ring-gray-200" />
                             <Error name="password" messages={errorMessages} />
+                        </div>
+                        <div className='mt-6'>
+                            <Error name="general" messages={errorMessages} />
                         </div>
                         <div className='mt-6 flex justify-between items-center'>
                             <div className="flex items-center">

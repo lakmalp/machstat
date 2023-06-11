@@ -22,7 +22,7 @@ export default function CompanyOverview() {
     ];
 
     return (
-        <div className=" h-full w-2/3 bg-white">
+        <div className=" h-full w-1/3 bg-white">
             <Table
                 sidebarButtons={sidebarButtons}
                 sidebarInquireEnabled={sidebarInquireEnabled}

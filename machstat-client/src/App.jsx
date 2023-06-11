@@ -11,6 +11,7 @@ import { useAuth } from "./_contexts/AuthContext";
 import MqttMessage from "./mqttMessage/mqttMessage";
 import Company from "./company/company";
 import Site from "./site/site";
+import EquipmentType from "./equipmentType/equipmentType";
 
 const ProtectedRoute = ({ children }) => {
     const {currentUser, processing} = useAuth();
@@ -67,6 +68,10 @@ export default function App() {
         {
             path: "/sites",
             element: <ProtectedRoute><Site /></ProtectedRoute>
+        },
+        {
+            path: "/equipmentTypes",
+            element: <ProtectedRoute><EquipmentType /></ProtectedRoute>
         }
     ]);
 

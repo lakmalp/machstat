@@ -76,7 +76,11 @@ export function AuthProvider({ children }) {
         } catch (e) {
             setCurrentUser()
             setSuccessMessages({});
-            setErrorMessages(e.response.data.errors);
+            if (e.response.data.hasOwnProperty("errors")) {
+                setErrorMessages(e.response.data.errors);
+            } else {
+                setErrorMessages({general: ["Server is not responding. Please contact Administrator."]})
+            }
         } finally {
             setProcessing(false);
         }
