@@ -16,7 +16,7 @@ export function SiteServiceProvider({ children }) {
     const emptyObject = {
         code: '',
         description: '',
-        company_id: ''
+        company_ref: ''
     };
 
     const DialogMode = {
@@ -237,6 +237,7 @@ export function SiteServiceProvider({ children }) {
     // #region start CRUD
     const createRecord = async () => {
         PageState.setWaiting(true);
+        setDialogMode(DialogMode.create);
         setDialogData();
         let res = await axios.get(`/api/${endPointRef.current}/create`);
         PageState.setWaiting(false);

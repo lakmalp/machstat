@@ -13,7 +13,7 @@ class SiteValidator
         return validator($request->all(), [
             'code' => ['required', Rule::unique('companies', 'code'), 'max:20'],
             'description' => ['required', 'max:100'],
-            'company_id' => [ 'required', 'exists:companies,id']
+            'company_ref' => [ 'required', 'exists:companies,id']
         ])->after(
             fn ($validator) => $this->validateProducts($request, $validator)
         )->validate();
@@ -24,7 +24,7 @@ class SiteValidator
         return validator($request->all(), [
             'code' => ['required', Rule::unique('companies', 'code')->ignore($request->id), 'max:20'],
             'description' => ['required', 'max:100'],
-            'company_id' => [ 'required', 'exists:companies,id']
+            'company_ref' => [ 'required', 'exists:companies,id']
         ])->after(
             fn ($validator) => $this->validateProducts($request, $validator)
         )->validate();

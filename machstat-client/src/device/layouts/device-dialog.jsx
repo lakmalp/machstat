@@ -25,7 +25,7 @@ export default function DeviceDialog() {
                         </div>
                         <div>
                             <label className="block text-sm font-inter font-semibold text-gray-500">Node ID</label>
-                            <select value={localData?.node_id} name="node_id" onChange={(e) => setLocalData(prev => ({ ...prev, node_id: e.target.value }))} className="border text-sm rounded font-inter h-7 mt-1 px-1 text-gray-800 focus:outline-1 outline-pink-400 focus:ring-2 ring-gray-200 w-full" type="text">
+                            <select value={localData?.node_ref} name="node_ref" onChange={(e) => setLocalData(prev => ({ ...prev, node_ref: e.target.value }))} className="border text-sm rounded font-inter h-7 mt-1 px-1 text-gray-800 focus:outline-1 outline-pink-400 focus:ring-2 ring-gray-200 w-full" type="text">
                                 <option value=""></option>
                                 {
                                     dialogData && dialogData.hasOwnProperty("nodes") && Array.isArray(dialogData.nodes || "") && dialogData.nodes.map(node => {
@@ -33,7 +33,7 @@ export default function DeviceDialog() {
                                     })
                                 }
                             </select>
-                            <div className="text-xs text-red-600 font-inter mt-1">{apiErrors?.node_id && <div>{apiErrors?.node_id}</div>}</div>
+                            <div className="text-xs text-red-600 font-inter mt-1">{apiErrors?.node_ref && <div>{apiErrors?.node_ref}</div>}</div>
                         </div>
                     </div>
                 </DialogBox.Content>

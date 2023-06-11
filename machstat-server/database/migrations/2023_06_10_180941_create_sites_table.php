@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('code', 20);
             $table->string('description', 100);
-            $table->unsignedBigInteger('company_id');
+            $table->unsignedBigInteger('company_ref');
             $table->timestamps();
 
-            $table->foreign('company_id')->references('id')->on('companies');
+            $table->foreign('company_ref')->references('id')->on('companies');
         });
     }
 

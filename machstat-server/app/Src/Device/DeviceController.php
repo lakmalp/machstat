@@ -55,7 +55,7 @@ class DeviceController extends Controller
 
     public function create(Request $request): JsonResponse
     {
-        $nodes = Node::whereNotIn('id', Device::select('node_id')->pluck('node_id'))->get();
+        $nodes = Node::whereNotIn('id', Device::select('node_ref')->pluck('node_ref'))->get();
         $device = new Device;
         return response()->json(['nodes' => $nodes, 'data' => $device]);
     }

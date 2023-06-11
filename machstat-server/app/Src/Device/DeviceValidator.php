@@ -12,7 +12,7 @@ class DeviceValidator
     {
         return validator($request->all(), [
             'name' => [ 'required', 'max:100' ],
-            'node_id' => [ 'required', 'exists:nodes,id']
+            'node_ref' => [ 'required', 'exists:nodes,id']
         ])->after(
             fn ($validator) => $this->validateProducts($request, $validator)
         )->validate();
@@ -22,7 +22,7 @@ class DeviceValidator
     {
         return validator($request->all(), [
             'name' => [ 'required', 'max:100' ],
-            'node_id' => [ 'required', 'exists:nodes,id', Rule::unique('devices', 'node_id')->ignore($request->id)]
+            'node_ref' => [ 'required', 'exists:nodes,id', Rule::unique('devices', 'node_ref')->ignore($request->id)]
         ])->after(
             fn ($validator) => $this->validateProducts($request, $validator)
         )->validate();

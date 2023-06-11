@@ -13,7 +13,7 @@ class EquipmentValidator
         return validator($request->all(), [
             'code' => [ 'required', 'max:20', Rule::unique('equipment', 'code') ],
             'description' => [ 'required', 'max:100' ],
-            'equipment_type_id' => [ 'required', 'exists:equipment_types,id']
+            'equipment_type_ref' => [ 'required', 'exists:equipment_types,id']
         ])->after(
             fn ($validator) => $this->validateProducts($request, $validator)
         )->validate();
@@ -24,7 +24,7 @@ class EquipmentValidator
         return validator($request->all(), [
             'code' => [ 'required', 'max:20', Rule::unique('equipment', 'code')->ignore($request->id) ],
             'description' => [ 'required', 'max:100' ],
-            'equipment_type_id' => [ 'required', 'exists:equipment_types,id']
+            'equipment_type_ref' => [ 'required', 'exists:equipment_types,id']
         ])->after(
             fn ($validator) => $this->validateProducts($request, $validator)
         )->validate();

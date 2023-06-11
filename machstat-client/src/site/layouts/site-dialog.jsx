@@ -20,7 +20,7 @@ export default function SiteDialog() {
                     <div className="grid grid-cols-3 gap-4">
                         <div className="col-span-1">
                             <label className="block text-sm font-inter font-semibold text-gray-500">Company</label>
-                            <select value={localData?.company_id} name="company_id" onChange={(e) => setLocalData(prev => ({ ...prev, company_id: e.target.value }))} className="border text-sm rounded font-inter h-7 mt-1 px-1 text-gray-800 focus:outline-1 outline-pink-400 focus:ring-2 ring-gray-200 w-full" type="text">
+                            <select value={localData?.company_ref} name="company_ref" onChange={(e) => setLocalData(prev => ({ ...prev, company_ref: e.target.value }))} className="border text-sm rounded font-inter h-7 mt-1 px-1 text-gray-800 focus:outline-1 outline-pink-400 focus:ring-2 ring-gray-200 w-full" type="text">
                                 <option value=""></option>
                                 {
                                     dialogData && dialogData.hasOwnProperty("companies") && Array.isArray(dialogData.companies || "") && dialogData.companies.map(company => {
@@ -28,7 +28,7 @@ export default function SiteDialog() {
                                     })
                                 }
                             </select>
-                            <div className="text-xs text-red-600 font-inter mt-1">{apiErrors?.company_id && <div>{apiErrors?.company_id}</div>}</div>
+                            <div className="text-xs text-red-600 font-inter mt-1">{apiErrors?.company_ref && <div>{apiErrors?.company_ref}</div>}</div>
                         </div>
                         <div className="col-span-2">
                             <label className="block text-sm font-inter font-semibold text-gray-500">Code</label>

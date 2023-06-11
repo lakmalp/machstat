@@ -8,14 +8,26 @@ import { useNavigate } from 'react-router-dom';
 
 const ServiceContext = React.createContext();
 
-export function useEquipmentTypeService() {
+export function useJobCardService() {
     return useContext(ServiceContext);
 }
 
-export function EquipmentTypeServiceProvider({ children }) {
+export function JobCardServiceProvider({ children }) {
     const emptyObject = {
-        code: '',
-        description: ''
+        'description': '',
+        'schedule_date': '',
+        'actual_date': '',
+        'site_ref': '',
+        'work_start_time': '',
+        'work_completed_time': '',
+        'time_taken': '',
+        'machine_shutoff_at': '',
+        'machine_started_at': '',
+        'status': '',
+        'notes': '',
+        'owner_user_ref': '',
+        'authorizer_user_ref': '',
+        'is_manual': ''
     };
 
     const DialogMode = {
@@ -43,7 +55,7 @@ export function EquipmentTypeServiceProvider({ children }) {
     const [pageSize, setPageSize] = useState(searchParams.get("pageSize") || 10);
     const [searchQuery, setSearchQuery] = useState(searchParams.get("searchQuery") || "");
 
-    const endPointRef = useRef("equipmentTypes");
+    const endPointRef = useRef("jobCards");
 
     const sidebarButtons = [
         {
@@ -167,8 +179,13 @@ export function EquipmentTypeServiceProvider({ children }) {
         let filterArr = Object.entries(filterValues);
         filterArr.map(([field, value]) => {
             switch (field) {
-                case "code":
                 case "description":
+                case "site.code":
+                case "status":
+                case "notes":
+                case "owner_user.name":
+                case "authorizer_user.name":
+                case "is_manual":
                     if (value !== '') {
                         _localData = _localData.filter(_data => {
                             try {
@@ -245,7 +262,7 @@ export function EquipmentTypeServiceProvider({ children }) {
             title: "Addition of records",
             message:
                 <div>
-                    Record will be added to the Companies collection.
+                    Record will be added to the JobCards collection.
                     <div className='pt-3'>Do you want to proceed?</div>
                 </div>,
             type: MessageBox.Constants.Type.Information,

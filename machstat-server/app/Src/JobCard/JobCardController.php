@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Src\Equipment;
+namespace App\Src\JobCard;
 
 use App\Http\Controllers\Controller;
-use App\Src\EquipmentType\EquipmentType;
+use App\Models\User;
+use App\Src\JobCardType\JobCardType;
 use App\Src\Node\Node;
+use App\Src\Site\Site;
 use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -12,12 +14,12 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class EquipmentController extends Controller
+class JobCardController extends Controller
 {
     private $validator;
 
     private $repository;
-    function __construct(EquipmentValidator $validator, EquipmentRepository $repository)
+    function __construct(JobCardValidator $validator, JobCardRepository $repository)
     {
         $this->validator = $validator;
         $this->repository = $repository;
@@ -31,10 +33,10 @@ class EquipmentController extends Controller
 
         $starting_point = $per_page * ($current_page - 1);
 
-        $total = Equipment::get()->count();
+        $total = JobCard::get()->count();
 
-        $data = Equipment::orderBy('created_at', 'ASC')
-            ->with(['equipmentType'])
+        $data = JobCard::orderBy('created_at', 'ASC')
+            ->with(['site', 'ownerUser', 'authorizerUser'])
             ->take($per_page)
             ->skip($starting_point)
             ->get()
@@ -43,6 +45,9 @@ class EquipmentController extends Controller
         $array= new Paginator($data, $per_page, $current_page);
 
         $params = collect([
+            'sites' => Site::get(), 
+            'ownerUsers' => User::get(),
+            'authorizerUsers' => User::get(),
             'total' => $total,
             'count' => $array->count(),
             'is_last_page' => (($array->count() < $per_page) || (($current_page - 1) * $per_page) + $array->count() == $total)
@@ -55,60 +60,64 @@ class EquipmentController extends Controller
 
     public function create(Request $request): JsonResponse
     {
-        $equipmentTypes = EquipmentType::get();
-        $equipment = new Equipment;
-        return response()->json(['equipment_types' => $equipmentTypes, 'data' => $equipment]);
+        $jobCard = new JobCard;
+        return response()->json([
+            'sites' => Site::get(), 
+            'ownerUsers' => User::get(), 
+            'authorizerUsers' => User::get(), 
+            'data' => $jobCard
+        ]);
     }
 
     public function store(Request $request): JsonResponse
     {
-        abort_if($request->user()->cannot('create-equipment', Equipment::class), 403);
+        abort_if($request->user()->cannot('create-jobCard', JobCard::class), 403);
 
         $validated = $this->validator->validateCreate($request);
 
-        $equipment = $this->repository->createEquipment($validated);
-        $equipment->load(['equipmentType']);
+        $jobCard = $this->repository->createJobCard($validated);
+        $jobCard->load(['site', 'ownerUser', 'authorizerUser']);
 
         // SendOrderToVendor::dispatch($order)->onQueue('orders');
 
         // NewOrderPlaced::dispatch($order);
         
-        return response()->json(['data' => $equipment]);
+        return response()->json(['data' => $jobCard]);
     }
 
-    public function edit(Equipment $equipment): JsonResponse
+    public function edit(JobCard $jobCard): JsonResponse
     {
-        $nodes = EquipmentType::get();
-
         return response()->json([
-            'equipment_types' => $nodes,
-            'data' => $equipment
+            'sites' => Site::get(), 
+            'ownerUsers' => User::get(), 
+            'authorizerUsers' => User::get(), 
+            'data' => $jobCard
         ]);
     }
 
-    public function update(Request $request, Equipment $equipment): JsonResponse
+    public function update(Request $request, JobCard $jobCard): JsonResponse
     {
-        abort_if($request->user()->cannot('edit-equipment', Equipment::class), 403);
+        abort_if($request->user()->cannot('edit-jobCard', JobCard::class), 403);
 
         $validated = $this->validator->validateUpdate($request);
 
-        $equipment = $this->repository->updateEquipment($equipment, $validated);
-        $equipment->load(['node']);
+        $jobCard = $this->repository->updateJobCard($jobCard, $validated);
+        $jobCard->load(['site', 'ownerUser', 'authorizerUser']);
 
         // SendOrderToVendor::dispatch($order)->onQueue('orders');
 
         // NewOrderPlaced::dispatch($order);
         
-        return response()->json(['data' => $equipment]);
+        return response()->json(['data' => $jobCard]);
     }
 
-    public function delete(Equipment $equipment): bool
+    public function delete(JobCard $jobCard): bool
     {
-        return $equipment->delete();
+        return $jobCard->delete();
     }
     public function deleteBatch(Request $request): JsonResponse
     {
-        Equipment::destroy($request->all());
+        JobCard::destroy($request->all());
         return response()->json([]);
     }
 }

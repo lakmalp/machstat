@@ -8,14 +8,15 @@ import { useNavigate } from 'react-router-dom';
 
 const ServiceContext = React.createContext();
 
-export function useEquipmentTypeService() {
+export function useEquipmentService() {
     return useContext(ServiceContext);
 }
 
-export function EquipmentTypeServiceProvider({ children }) {
+export function EquipmentServiceProvider({ children }) {
     const emptyObject = {
         code: '',
-        description: ''
+        description: '',
+        equipment_type_ref: ''
     };
 
     const DialogMode = {
@@ -43,7 +44,7 @@ export function EquipmentTypeServiceProvider({ children }) {
     const [pageSize, setPageSize] = useState(searchParams.get("pageSize") || 10);
     const [searchQuery, setSearchQuery] = useState(searchParams.get("searchQuery") || "");
 
-    const endPointRef = useRef("equipmentTypes");
+    const endPointRef = useRef("equipment");
 
     const sidebarButtons = [
         {
@@ -169,6 +170,7 @@ export function EquipmentTypeServiceProvider({ children }) {
             switch (field) {
                 case "code":
                 case "description":
+                case "equipment_type.code":
                     if (value !== '') {
                         _localData = _localData.filter(_data => {
                             try {
@@ -245,7 +247,7 @@ export function EquipmentTypeServiceProvider({ children }) {
             title: "Addition of records",
             message:
                 <div>
-                    Record will be added to the Companies collection.
+                    Record will be added to the Equipments collection.
                     <div className='pt-3'>Do you want to proceed?</div>
                 </div>,
             type: MessageBox.Constants.Type.Information,

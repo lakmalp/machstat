@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
-            $table->unsignedBigInteger('node_id');
+            $table->unsignedBigInteger('node_ref');
             $table->timestamps();
 
-            $table->foreign('node_id')->references('id')->on('nodes');
+            $table->foreign('node_ref')->references('id')->on('nodes');
         });
     }
 

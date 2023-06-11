@@ -12,6 +12,8 @@ import MqttMessage from "./mqttMessage/mqttMessage";
 import Company from "./company/company";
 import Site from "./site/site";
 import EquipmentType from "./equipmentType/equipmentType";
+import Equipment from "./equipment/equipment";
+import JobCard from "./jobCard/jobCard";
 
 const ProtectedRoute = ({ children }) => {
     const {currentUser, processing} = useAuth();
@@ -72,6 +74,14 @@ export default function App() {
         {
             path: "/equipmentTypes",
             element: <ProtectedRoute><EquipmentType /></ProtectedRoute>
+        },
+        {
+            path: "/equipment",
+            element: <ProtectedRoute><Equipment /></ProtectedRoute>
+        },
+        {
+            path: "/jobCards",
+            element: <ProtectedRoute><JobCard /></ProtectedRoute>
         }
     ]);
 

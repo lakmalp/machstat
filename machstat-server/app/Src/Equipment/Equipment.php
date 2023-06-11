@@ -10,11 +10,11 @@ class Equipment extends Model {
     protected $fillable = [
         'code',
         'description',
-        'equipment_type_id',
+        'equipment_type_ref',
     ];
 
     public function equipmentType(): BelongsTo
     {
-        return $this->belongsTo(EquipmentType::class);
+        return $this->belongsTo(EquipmentType::class, 'equipment_type_ref');
     }
 }

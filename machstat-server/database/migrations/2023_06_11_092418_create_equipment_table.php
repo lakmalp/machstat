@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('code', 20)->unique();
             $table->string('description', 100);
-            $table->unsignedBigInteger('equipment_type_id');
+            $table->unsignedBigInteger('equipment_type_ref');
             $table->timestamps();
 
-            $table->foreign('equipment_type_id')->references('id')->on('equipment_types');
+            $table->foreign('equipment_type_ref')->references('id')->on('equipment_types');
         });
     }
 

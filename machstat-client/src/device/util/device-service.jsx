@@ -15,7 +15,7 @@ export function useDeviceService() {
 export function DeviceServiceProvider({ children }) {
     const emptyObject = {
         name: '',
-        node_id: ''
+        node_ref: ''
     };
 
     const DialogMode = {
@@ -37,7 +37,6 @@ export function DeviceServiceProvider({ children }) {
     const [filterValues, setFilterValues] = useState(emptyObject);
     const [dialogData, setDialogData] = useState({});
     const [showCrudDialog, setShowCrudDialog] = useState(false);
-    const [nodes, setNodes] = useState();
     const [apiErrors, setApiErrors] = useState({});
     const [dialogMode, setDialogMode] = useState(DialogMode.create);
     const [pageNo, setPageNo] = useState(searchParams.get("pageNo") || 1);
@@ -134,9 +133,6 @@ export function DeviceServiceProvider({ children }) {
         try {
             PageState.setWaiting(true);
             let res = await axios.get(`/api/${endPointRef.current}?pageNo=${pageNo}&searchQuery=${searchQuery}&pageSize=${pageSize}`);
-            if (res.data.hasOwnProperty("nodes")) {
-                setNodes([...res.data.nodes]);
-            }
 
             if (res.data.hasOwnProperty("data")) {
                 updateLocalState(res.data.data);
@@ -236,6 +232,7 @@ export function DeviceServiceProvider({ children }) {
     // #region start CRUD
     const createRecord = async () => {
         PageState.setWaiting(true);
+        setDialogMode(DialogMode.create);
         setDialogData();
         let res = await axios.get(`/api/${endPointRef.current}/create`);
         PageState.setWaiting(false);
@@ -338,7 +335,6 @@ export function DeviceServiceProvider({ children }) {
         dialogMode,
         dialogData,
         sidebarButtons,
-        nodes,
         filterValues,
         sidebarInquireEnabled,
         setSelectAllChecked,

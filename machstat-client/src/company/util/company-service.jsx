@@ -231,6 +231,7 @@ export function CompanyServiceProvider({ children }) {
     // #region start CRUD
     const createRecord = async () => {
         PageState.setWaiting(true);
+        setDialogMode(DialogMode.create);
         setDialogData();
         let res = await axios.get(`/api/${endPointRef.current}/create`);
         PageState.setWaiting(false);

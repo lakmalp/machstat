@@ -9,11 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Device extends Model {
     protected $fillable = [
         'name',
-        'node_id',
+        'node_ref',
     ];
 
     public function node(): BelongsTo
     {
-        return $this->belongsTo(Node::class);
+        return $this->belongsTo(Node::class, 'node_ref');
     }
 }
