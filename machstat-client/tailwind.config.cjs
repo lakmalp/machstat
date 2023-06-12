@@ -20,5 +20,5 @@ module.exports = {
       'roboto-mono': ['Roboto Mono', 'sans-serif']
     }
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 }

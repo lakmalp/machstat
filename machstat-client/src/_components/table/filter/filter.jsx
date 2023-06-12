@@ -1,7 +1,7 @@
 import FilterBox from "./filter-box/filter-box";
 import FilterComboBox from "./filter-combo-box/filter-combo-box";
 
-export default function Filter({ columns, data, filterData, setFilterData, selectAllRows }) {
+export default function Filter({ columns, columnOrder, visibleColumns, data, filterData, setFilterData, selectAllRows }) {
     const _getValue = (data, field) => {
         const keys = field.split(".");
         try {
@@ -25,34 +25,34 @@ export default function Filter({ columns, data, filterData, setFilterData, selec
                     </div>
                     <div className="w-full grid grid-cols-12 gap-4 items-center border-b h-9 bg-gray-100">
                         {
-                            columns.map(column => {
-                                switch (column.type) {
+                            columnOrder.filter((col, pos) => (pos <= 11 && visibleColumns.includes(col))).map((column, i) => {
+                                switch (columns.filter(col => col.name === column)[0].type) {
                                     case "text":
                                         return <FilterBox
-                                            key={column.name}
-                                            name={column.name}
-                                            value={filterData[column.name]}
+                                            key={column}
+                                            name={column}
+                                            value={filterData[column]}
                                             setValue={setFilterData}
-                                            className={`col-span-${column.colSpan}`}
+                                            className={`col-span-${columns.filter(col => col.name === column)[0].colSpan}`}
                                         />;
 
                                     case "dropdown":
                                         return <FilterComboBox
-                                            key={column.name}
-                                            name={column.name}
-                                            value={filterData[column.name]}
-                                            items={Array.isArray(data) && [null, ...data.map(item => _getValue(item, column.name))]}
+                                            key={column}
+                                            name={column}
+                                            value={filterData[column]}
+                                            items={Array.isArray(data) && [null, ...data.map(item => _getValue(item, column))]}
                                             setValue={setFilterData}
-                                            className={`col-span-${column.colSpan}`}
+                                            className={`col-span-${columns.filter(col => col.name === column)[0].colSpan}`}
                                         />;
 
                                         case "option":
                                             return <FilterBox
-                                                key={column.name}
-                                                name={column.name}
-                                                value={filterData[column.name]}
+                                                key={column}
+                                                name={column}
+                                                value={filterData[column]}
                                                 setValue={setFilterData}
-                                                className={`col-span-${column.colSpan}`}
+                                                className={`col-span-${columns.filter(col => col.name === column)[0].colSpan}`}
                                             />;
 
                                     default:
