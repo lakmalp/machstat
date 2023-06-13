@@ -36,6 +36,7 @@ export default function JobCardOverview() {
     return (
         <div className=" h-full w-full bg-white">
             <Table
+                container="JobCardOverview"
                 sidebarButtons={sidebarButtons}
                 sidebarInquireEnabled={sidebarInquireEnabled}
                 columns={columns}

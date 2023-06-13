@@ -26,6 +26,7 @@ export default function NodeOverview() {
     return (
         <div className=" h-full w-1/3 bg-white">
             <Table
+                container="NodeOverview"
                 sidebarButtons={sidebarButtons}
                 sidebarInquireEnabled={sidebarInquireEnabled}
                 columns={columns}

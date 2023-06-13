@@ -25,6 +25,7 @@ export default function EquipmentOverview() {
     return (
         <div className=" h-full w-2/5 bg-white">
             <Table
+                container="EquipmentOverview"
                 sidebarButtons={sidebarButtons}
                 sidebarInquireEnabled={sidebarInquireEnabled}
                 columns={columns}

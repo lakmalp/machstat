@@ -25,6 +25,7 @@ export default function DeviceOverview() {
     return (
         <div className=" h-full w-2/5 bg-white">
             <Table
+                container="DeviceOverview"
                 sidebarButtons={sidebarButtons}
                 sidebarInquireEnabled={sidebarInquireEnabled}
                 columns={columns}

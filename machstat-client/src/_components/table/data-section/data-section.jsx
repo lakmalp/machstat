@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function DataSection({ columns, data, onRowChecked, selectedRows }) {
+export default function DataSection({ columns, visibleColumns, data, onRowChecked, selectedRows }) {
     return (
         Array.isArray(data) && data.map((row, i) => {
             return (
@@ -16,10 +16,10 @@ export default function DataSection({ columns, data, onRowChecked, selectedRows 
                     </div>
                     <div key={i} className="w-full grid grid-cols-12 gap-4 items-center border-b h-9">
                         {
-                            Array.isArray(columns) && columns.map(column => {
+                            Array.isArray(visibleColumns) && visibleColumns.map(column => {
                                 return (
-                                    <div key={column.name} className={`text-${column.textAlign} col-span-${column.colSpan} text-sm text-gray-800 font-roboto-mono`}>
-                                        <ColumnData columnMeta={column} data={row} />
+                                    <div key={column} className={`text-${columns.filter(col => col.name === column)[0].textAlign} col-span-${columns.filter(col => col.name === column)[0].colSpan} text-sm text-gray-800 font-roboto-mono`}>
+                                        <ColumnData columnMeta={columns.filter(col => col.name === column)[0]} data={row} />
                                     </div>
                                 )
                             })

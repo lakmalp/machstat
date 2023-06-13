@@ -24,6 +24,7 @@ export default function CompanyOverview() {
     return (
         <div className=" h-full w-1/3 bg-white">
             <Table
+                container="CompanyOverview"
                 sidebarButtons={sidebarButtons}
                 sidebarInquireEnabled={sidebarInquireEnabled}
                 columns={columns}
