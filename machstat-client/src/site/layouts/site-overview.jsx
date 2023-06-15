@@ -23,8 +23,9 @@ export default function SiteOverview() {
     ];
 
     return (
-        <div className=" h-full w-2/5 bg-white">
+        <div className=" h-full xs:w-full xl:w-2/5 bg-white">
             <Table
+                label="Sites"
                 container="SiteOverview"
                 sidebarButtons={sidebarButtons}
                 sidebarInquireEnabled={sidebarInquireEnabled}

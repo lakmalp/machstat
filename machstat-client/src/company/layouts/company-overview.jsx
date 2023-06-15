@@ -22,8 +22,9 @@ export default function CompanyOverview() {
     ];
 
     return (
-        <div className=" h-full w-1/3 bg-white">
+        <div className=" h-full xs:w-full xl:w-1/3 bg-white">
             <Table
+                label="Companies"
                 container="CompanyOverview"
                 sidebarButtons={sidebarButtons}
                 sidebarInquireEnabled={sidebarInquireEnabled}

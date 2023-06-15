@@ -14,11 +14,11 @@ export default function DataSection({ columns, visibleColumns, data, onRowChecke
                             checked={selectedRows.filter(item => (item.id == row.id))[0].checked}
                         />
                     </div>
-                    <div key={i} className="w-full grid grid-cols-12 gap-4 items-center border-b h-9">
+                    <div key={i} className=" font-dm-sans w-full grid grid-cols-12 gap-4 items-center border-b h-9">
                         {
                             Array.isArray(visibleColumns) && visibleColumns.map(column => {
                                 return (
-                                    <div key={column} className={`text-${columns.filter(col => col.name === column)[0].textAlign} col-span-${columns.filter(col => col.name === column)[0].colSpan} text-sm text-gray-800 font-roboto-mono`}>
+                                    <div key={column} className={`text-${columns.filter(col => col.name === column)[0].textAlign} col-span-${columns.filter(col => col.name === column)[0].colSpan} text-sm text-gray-800`}>
                                         <ColumnData columnMeta={columns.filter(col => col.name === column)[0]} data={row} />
                                     </div>
                                 )

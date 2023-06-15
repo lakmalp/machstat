@@ -17,7 +17,8 @@ module.exports = {
     fontFamily: {
       'inter': ['Inter', 'sans-serif'],
       'roboto': ['Roboto', 'sans-serif'],
-      'roboto-mono': ['Roboto Mono', 'sans-serif']
+      'roboto-mono': ['Roboto Mono', 'sans-serif'],
+      'dm-sans': ['DM Sans', 'sans-serif']
     }
   },
   plugins: [require("@tailwindcss/forms")],

@@ -21,11 +21,11 @@ export default function Filter({ columns, visibleColumns, data, filterData, setF
     return (
         <>
             <form>
-                <div className='flex items-center bg-gray-100 h-9 pr-2'>
-                    <div className='w-12 h-9 flex justify-center items-center'>
+                <div className='flex items-center bg-gray-100a h-10 pr-2'>
+                    <div className='w-12 h-9 flex justify-center items-center border-b'>
                         <input onChange={() => selectAllRows(prev => !prev)} type="checkbox" className="rounded-full border-gray-400 " />
                     </div>
-                    <div className="w-full grid grid-cols-12 gap-4 items-center border-b h-9 bg-gray-100">
+                    <div className="w-full grid grid-cols-12 gap-4 items-center border-b h-9 bg-gray-100a">
                         {
                             Array.isArray(visibleColumns) &&
                             visibleColumns

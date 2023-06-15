@@ -4,7 +4,7 @@ import DataSection from "./data-section/data-section";
 import Filter from "./filter/filter";
 import Header from "./header/header";
 
-export default function Table({ container, sidebarButtons, sidebarInquireEnabled, columns, localData, serverData, filterValues, setFilterValues, selectedRows, rowCheckboxClicked, setSelectAllChecked }) {
+export default function Table({ container, label, sidebarButtons, sidebarInquireEnabled, columns, localData, serverData, filterValues, setFilterValues, selectedRows, rowCheckboxClicked, setSelectAllChecked }) {
     let colCount = 0;
     const [visibleColumns, setVisibleColumns] = useState(JSON.parse(localStorage.getItem(container + ".visibleColumns")) ||
         columns
@@ -62,8 +62,9 @@ export default function Table({ container, sidebarButtons, sidebarInquireEnabled
 
     return (
         <>
-            <div className="w-full flex items-start">
-                <TableSidebar sidebarButtons={sidebarButtons} className="rounded-lg py-1 bg-gray-100 px-1 " inquireEnabled={sidebarInquireEnabled} />
+            <h2 className="font-dm-sans text-lg py-2">{label}</h2>
+            <div className="w-full flex items-start rounded-lg">
+                <TableSidebar sidebarButtons={sidebarButtons} className="rounded-lg1 py-1 bg-gray-50 border-r1 px-1 " inquireEnabled={sidebarInquireEnabled} />
                 <div className="w-full pl-2 font-inter">
                     <Header columns={columns} moveColumn={moveColumn} hideColumn={hideColumn} showColumn={showColumn} visibleColumns={visibleColumns} setVisibleColumns={setVisibleColumns} />
                     <Filter columns={columns} visibleColumns={visibleColumns} data={serverData} filterData={filterValues} setFilterData={setFilterValues} selectAllRows={setSelectAllChecked} />

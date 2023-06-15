@@ -24,8 +24,9 @@ export default function NodeOverview() {
     ];
 
     return (
-        <div className=" h-full w-1/3 bg-white">
+        <div className=" h-full xs:w-full xl:w-1/3 bg-white">
             <Table
+                label="Nodes"
                 container="NodeOverview"
                 sidebarButtons={sidebarButtons}
                 sidebarInquireEnabled={sidebarInquireEnabled}
